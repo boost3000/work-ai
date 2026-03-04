@@ -1,0 +1,9 @@
+{
+    "mcpServers": {
+        "work-ai": {
+            "type": "stdio",
+            "command": "deno",
+            "args": ["run", "--allow-env", "--allow-read", "--allow-net", "src/mcp/server.ts"]
+        }
+    }
+}

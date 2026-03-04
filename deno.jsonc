@@ -1,0 +1,20 @@
+{
+    "tasks": {
+        "jira": "deno run --allow-env --allow-read --allow-net src/jira/smoke.ts",
+        "slack": "deno run --allow-env --allow-read --allow-net src/slack/smoke.ts",
+        "confluence": "deno run --allow-env --allow-read --allow-net src/confluence/smoke.ts"
+    },
+    "imports": {
+        "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
+        "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.12.1",
+        "zod": "npm:zod@^3.24.2"
+    },
+    "fmt": {
+        "useTabs": false,
+        "lineWidth": 120,
+        "indentWidth": 4,
+        "semiColons": true,
+        "singleQuote": true,
+        "proseWrap": "always"
+    }
+}

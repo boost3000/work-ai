@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Current File (Deno - allow-multiple)",
+            "type": "shell",
+            "command": "deno run -A --unstable-kv --unstable-cron --unstable-temporal --unsafely-ignore-certificate-errors ${file}",
+            "presentation": {
+                "panel": "new",
+                "showReuseMessage": false,
+                "reveal": "always",
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "runOptions": {
+                "instanceLimit": 10
+            },
+            "problemMatcher": []
+        }
+    ]
+}

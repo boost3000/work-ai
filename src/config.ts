@@ -1,4 +1,5 @@
 import '@std/dotenv/load';
+import type { GitLabConfig } from './gitlab/types.ts';
 import type { JiraConfig } from './jira/types.ts';
 import type { SlackConfig } from './slack/types.ts';
 
@@ -21,5 +22,12 @@ export function loadJiraConfig(): JiraConfig {
 export function loadSlackConfig(): SlackConfig {
     return {
         token: requireEnv('SLACK_TOKEN'),
+    };
+}
+
+export function loadGitLabConfig(): GitLabConfig {
+    return {
+        baseUrl: requireEnv('GITLAB_BASE_URL').replace(/\/+$/, ''),
+        token: requireEnv('GITLAB_TOKEN'),
     };
 }

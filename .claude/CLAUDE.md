@@ -10,5 +10,7 @@
 
 ## Project idea
 
-- Automate work. Handle tickets from Jira, communicate with work colleagues via. Slack. Write and edit code. Read
-  confluence regularly to get bigger picture of company mission and roadmaps.
+- Automate work. Handle tickets from Jira, communicate with work colleagues via. Slack.
+- Write and edit code and interact with gitlab.
+- Read confluence to get additional info about the company and their projects.
+- Handle emails on <https://outlook.office.com/>

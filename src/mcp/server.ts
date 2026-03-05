@@ -2,7 +2,8 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
-import { loadJiraConfig, loadSlackConfig } from '../config.ts';
+import { loadGitLabConfig, loadJiraConfig, loadSlackConfig } from '../config.ts';
+import { GitLabClient } from '../gitlab/client.ts';
 import { JiraClient } from '../jira/client.ts';
 import { SlackClient } from '../slack/client.ts';
 import { ConfluenceClient } from '../confluence/client.ts';
@@ -11,6 +12,7 @@ const jiraConfig = loadJiraConfig();
 const jira = new JiraClient(jiraConfig);
 const slack = new SlackClient(loadSlackConfig());
 const confluence = new ConfluenceClient(jiraConfig);
+const gitlab = new GitLabClient(loadGitLabConfig());
 
 const server = new Server(
     { name: 'work-ai', version: '1.0.0' },
@@ -160,6 +162,56 @@ const tools = [
             required: ['cql'],
         },
     },
+    // GitLab
+    {
+        name: 'gitlab_list_projects',
+        description: 'List GitLab projects you have access to. Optionally search by name.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                search: { type: 'string', description: 'Optional search query to filter projects by name' },
+                limit: { type: 'number', description: 'Max results (default 20)' },
+            },
+        },
+    },
+    {
+        name: 'gitlab_get_project',
+        description: 'Get details of a GitLab project by ID or URL-encoded path (e.g. "group%2Fproject").',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+            },
+            required: ['projectId'],
+        },
+    },
+    {
+        name: 'gitlab_get_tree',
+        description: 'List files and directories in a GitLab repository path.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                path: { type: 'string', description: 'Directory path (default: root)' },
+                ref: { type: 'string', description: 'Branch or tag (default: project default branch)' },
+                limit: { type: 'number', description: 'Max results (default 100)' },
+            },
+            required: ['projectId'],
+        },
+    },
+    {
+        name: 'gitlab_get_file',
+        description: 'Read the content of a file from a GitLab repository.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                filePath: { type: 'string', description: 'Path to the file in the repository' },
+                ref: { type: 'string', description: 'Branch or tag (default: project default branch)' },
+            },
+            required: ['projectId', 'filePath'],
+        },
+    },
 ];
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({ tools }));
@@ -269,6 +321,51 @@ async function handleTool(name: string, args: Args): Promise<string> {
                 null,
                 2,
             );
+        }
+
+        // GitLab
+        case 'gitlab_list_projects': {
+            const projects = await gitlab.listProjects(args.search, args.limit);
+            return JSON.stringify(
+                projects.map((p) => ({
+                    id: p.id,
+                    name: p.name,
+                    path: p.path_with_namespace,
+                    description: p.description,
+                    defaultBranch: p.default_branch,
+                    lastActivity: p.last_activity_at,
+                })),
+                null,
+                2,
+            );
+        }
+        case 'gitlab_get_project': {
+            const project = await gitlab.getProject(args.projectId);
+            return JSON.stringify(
+                {
+                    id: project.id,
+                    name: project.name,
+                    path: project.path_with_namespace,
+                    description: project.description,
+                    defaultBranch: project.default_branch,
+                    webUrl: project.web_url,
+                    lastActivity: project.last_activity_at,
+                },
+                null,
+                2,
+            );
+        }
+        case 'gitlab_get_tree': {
+            const items = await gitlab.getTree(args.projectId, args.path, args.ref, args.limit);
+            return JSON.stringify(
+                items.map((i) => ({ type: i.type, path: i.path, name: i.name })),
+                null,
+                2,
+            );
+        }
+        case 'gitlab_get_file': {
+            const file = await gitlab.getFile(args.projectId, args.filePath, args.ref);
+            return file.content;
         }
 
         default:

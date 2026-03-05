@@ -9,12 +9,15 @@ export class GitLabClient {
         this.token = config.token;
     }
 
-    private async request<T>(path: string): Promise<T> {
+    private async request<T>(path: string, options?: RequestInit): Promise<T> {
         const url = `${this.baseUrl}/api/v4${path}`;
         const response = await fetch(url, {
+            ...options,
             headers: {
                 'PRIVATE-TOKEN': this.token,
+                'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                ...options?.headers,
             },
         });
 
@@ -59,5 +62,49 @@ export class GitLabClient {
         );
         file.content = atob(file.content);
         return file;
+    }
+
+    async createBranch(projectId: string | number, branchName: string, ref: string): Promise<void> {
+        await this.request(`/projects/${encodeURIComponent(projectId)}/repository/branches`, {
+            method: 'POST',
+            body: JSON.stringify({
+                branch: branchName,
+                ref: ref,
+            }),
+        });
+    }
+
+    async createCommit(
+        projectId: string | number,
+        branch: string,
+        message: string,
+        actions: { action: 'create' | 'delete' | 'move' | 'update'; file_path: string; content?: string }[],
+    ): Promise<void> {
+        await this.request(`/projects/${encodeURIComponent(projectId)}/repository/commits`, {
+            method: 'POST',
+            body: JSON.stringify({
+                branch,
+                commit_message: message,
+                actions,
+            }),
+        });
+    }
+
+    async createMergeRequest(
+        projectId: string | number,
+        sourceBranch: string,
+        targetBranch: string,
+        title: string,
+        description?: string,
+    ): Promise<{ web_url: string }> {
+        return await this.request<{ web_url: string }>(`/projects/${encodeURIComponent(projectId)}/merge_requests`, {
+            method: 'POST',
+            body: JSON.stringify({
+                source_branch: sourceBranch,
+                target_branch: targetBranch,
+                title,
+                description,
+            }),
+        });
     }
 }

@@ -212,6 +212,61 @@ const tools = [
             required: ['projectId', 'filePath'],
         },
     },
+    {
+        name: 'gitlab_create_branch',
+        description: 'Create a new branch in a GitLab repository.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                branchName: { type: 'string', description: 'Name of the new branch' },
+                ref: { type: 'string', description: 'Source branch or commit SHA (e.g. "main")' },
+            },
+            required: ['projectId', 'branchName', 'ref'],
+        },
+    },
+    {
+        name: 'gitlab_create_commit',
+        description: 'Create a commit with one or more file changes.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                branch: { type: 'string', description: 'Branch to commit to' },
+                message: { type: 'string', description: 'Commit message' },
+                actions: {
+                    type: 'array',
+                    description: 'List of file actions (create, delete, move, update)',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            action: { type: 'string', enum: ['create', 'delete', 'move', 'update'] },
+                            file_path: { type: 'string' },
+                            content: { type: 'string', description: 'Content for create/update actions' },
+                            previous_path: { type: 'string', description: 'Required for move action' },
+                        },
+                        required: ['action', 'file_path'],
+                    },
+                },
+            },
+            required: ['projectId', 'branch', 'message', 'actions'],
+        },
+    },
+    {
+        name: 'gitlab_create_merge_request',
+        description: 'Create a new merge request.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                sourceBranch: { type: 'string', description: 'The source branch' },
+                targetBranch: { type: 'string', description: 'The target branch' },
+                title: { type: 'string', description: 'Title of the MR' },
+                description: { type: 'string', description: 'Description of the MR' },
+            },
+            required: ['projectId', 'sourceBranch', 'targetBranch', 'title'],
+        },
+    },
 ];
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({ tools }));
@@ -366,6 +421,24 @@ async function handleTool(name: string, args: Args): Promise<string> {
         case 'gitlab_get_file': {
             const file = await gitlab.getFile(args.projectId, args.filePath, args.ref);
             return file.content;
+        }
+        case 'gitlab_create_branch': {
+            await gitlab.createBranch(args.projectId, args.branchName, args.ref);
+            return `Created branch '${args.branchName}' from '${args.ref}' in project ${args.projectId}.`;
+        }
+        case 'gitlab_create_commit': {
+            await gitlab.createCommit(args.projectId, args.branch, args.message, args.actions);
+            return `Created commit on branch '${args.branch}' in project ${args.projectId}.`;
+        }
+        case 'gitlab_create_merge_request': {
+            const mr = await gitlab.createMergeRequest(
+                args.projectId,
+                args.sourceBranch,
+                args.targetBranch,
+                args.title,
+                args.description,
+            );
+            return JSON.stringify(mr, null, 2);
         }
 
         default:

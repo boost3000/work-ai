@@ -162,7 +162,7 @@ const tools = [
     },
 ];
 
-server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools }));
+server.setRequestHandler(ListToolsRequestSchema, () => ({ tools }));
 
 // deno-lint-ignore no-explicit-any
 type Args = Record<string, any>;

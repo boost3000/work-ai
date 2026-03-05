@@ -47,7 +47,7 @@ export class ConfluenceClient {
         return result.results;
     }
 
-    async getPage(pageId: string, includeBody = true): Promise<ConfluencePage> {
+    getPage(pageId: string, includeBody = true): Promise<ConfluencePage> {
         const params = includeBody ? '?body-format=storage' : '';
         return this.request<ConfluencePage>(`/pages/${encodeURIComponent(pageId)}${params}`);
     }

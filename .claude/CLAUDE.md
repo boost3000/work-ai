@@ -24,5 +24,5 @@
 
 - Created a folder [.knowledge](../.knowledge) in project route if not existing.
 - You can freely create, delete and edit files in the `.knowledge` folder to build knowledge about
-  the company the, codebase, the infrastructure and the people who work there.
+  the company, the codebase, the infrastructure and the people who work there.
 - You should also write files in `.knowledge` folder that are not human readable if it makes you more capable. These must be prefixed with `_ai_`.

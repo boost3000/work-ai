@@ -18,6 +18,9 @@
 - `src/confluence/client.ts` — `ConfluenceClient` wrapping Confluence Cloud API v2 + v1 search (basic auth)
 - `src/confluence/types.ts` — TypeScript types for Confluence API entities
 - `src/confluence/smoke.ts` — quick smoke test script (`deno task confluence`)
+- `src/gitlab/client.ts` — `GitLabClient` class wrapping GitLab API v4 (Private-Token auth)
+- `src/gitlab/types.ts` — TypeScript types for GitLab API entities
+- `src/gitlab/smoke.ts` — quick smoke test script
 - `src/mcp/server.ts` — MCP stdio server exposing all clients as Claude Code tools
 - `.mcp.json` — project-scoped MCP config for Claude Code auto-discovery
 
@@ -26,6 +29,7 @@
 - Jira Cloud with basic auth (email + API token)
 - Slack with User Token (xoxp-) auth
 - Confluence reuses Jira credentials (same Atlassian Cloud instance)
+- GitLab self-hosted at gitlab.4players.de, uses Private-Token auth; API v4
 - Config via `.env` file (gitignored), template in `.env.example`
 - No third-party SDKs — plain fetch with typed wrappers
 - Jira search uses new `POST /search/jql` endpoint (old `/search` was removed)

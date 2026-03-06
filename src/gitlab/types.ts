@@ -29,3 +29,36 @@ export interface GitLabFile {
     content: string;
     ref: string;
 }
+
+export interface GitLabMergeRequest {
+    id: number;
+    iid: number;
+    title: string;
+    state: string;
+    source_branch: string;
+    target_branch: string;
+    author: { name: string; username: string };
+    created_at: string;
+    updated_at: string;
+    web_url: string;
+    description: string | null;
+}
+
+export interface GitLabBranch {
+    name: string;
+    merged: boolean;
+    protected: boolean;
+    default: boolean;
+    commit: { id: string; short_id: string; title: string; committed_date: string };
+}
+
+export interface GitLabPipeline {
+    id: number;
+    iid: number;
+    status: string;
+    ref: string;
+    sha: string;
+    created_at: string;
+    updated_at: string;
+    web_url: string;
+}

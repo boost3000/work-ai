@@ -77,6 +77,15 @@ export class SlackClient {
         return result.messages;
     }
 
+    async getThreadReplies(channelId: string, threadTs: string, limit = 20): Promise<SlackMessage[]> {
+        const result = await this.request<SlackMessagesResponse>('conversations.replies', {
+            channel: channelId,
+            ts: threadTs,
+            limit: String(limit),
+        });
+        return result.messages;
+    }
+
     async sendMessage(channelId: string, text: string): Promise<SlackPostMessageResponse> {
         return await this.request<SlackPostMessageResponse>('chat.postMessage', {
             channel: channelId,

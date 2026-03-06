@@ -73,3 +73,17 @@ export interface JiraTransition {
 export interface JiraTransitionsResponse {
     transitions: JiraTransition[];
 }
+
+export interface JiraComment {
+    id: string;
+    author: JiraUser;
+    body: unknown;
+    created: string;
+    updated: string;
+}
+
+export interface JiraCreatedIssue {
+    id: string;
+    key: string;
+    self: string;
+}

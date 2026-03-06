@@ -1,4 +1,12 @@
-import type { GitLabConfig, GitLabFile, GitLabProject, GitLabTreeItem } from './types.ts';
+import type {
+    GitLabBranch,
+    GitLabConfig,
+    GitLabFile,
+    GitLabMergeRequest,
+    GitLabPipeline,
+    GitLabProject,
+    GitLabTreeItem,
+} from './types.ts';
 
 export class GitLabClient {
     private baseUrl: string;
@@ -88,6 +96,39 @@ export class GitLabClient {
                 actions,
             }),
         });
+    }
+
+    listMergeRequests(
+        projectId: string | number,
+        state: 'opened' | 'closed' | 'merged' | 'all' = 'opened',
+        limit = 20,
+    ): Promise<GitLabMergeRequest[]> {
+        const params = new URLSearchParams({ state, per_page: String(limit) });
+        return this.request<GitLabMergeRequest[]>(
+            `/projects/${encodeURIComponent(projectId)}/merge_requests?${params}`,
+        );
+    }
+
+    listBranches(projectId: string | number, search?: string, limit = 50): Promise<GitLabBranch[]> {
+        const params = new URLSearchParams({ per_page: String(limit) });
+        if (search) params.set('search', search);
+        return this.request<GitLabBranch[]>(
+            `/projects/${encodeURIComponent(projectId)}/repository/branches?${params}`,
+        );
+    }
+
+    listPipelines(
+        projectId: string | number,
+        ref?: string,
+        status?: string,
+        limit = 20,
+    ): Promise<GitLabPipeline[]> {
+        const params = new URLSearchParams({ per_page: String(limit) });
+        if (ref) params.set('ref', ref);
+        if (status) params.set('status', status);
+        return this.request<GitLabPipeline[]>(
+            `/projects/${encodeURIComponent(projectId)}/pipelines?${params}`,
+        );
     }
 
     async createMergeRequest(

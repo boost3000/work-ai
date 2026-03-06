@@ -1,4 +1,12 @@
-import type { JiraConfig, JiraIssue, JiraSearchResult, JiraTransition, JiraTransitionsResponse } from './types.ts';
+import type {
+    JiraComment,
+    JiraConfig,
+    JiraCreatedIssue,
+    JiraIssue,
+    JiraSearchResult,
+    JiraTransition,
+    JiraTransitionsResponse,
+} from './types.ts';
 
 export class JiraClient {
     private baseUrl: string;
@@ -73,6 +81,52 @@ export class JiraClient {
         await this.request(`/issue/${encodeURIComponent(issueKey)}/transitions`, {
             method: 'POST',
             body: JSON.stringify({ transition: { id: transitionId } }),
+        });
+    }
+
+    addComment(issueKey: string, text: string): Promise<JiraComment> {
+        return this.request<JiraComment>(`/issue/${encodeURIComponent(issueKey)}/comment`, {
+            method: 'POST',
+            body: JSON.stringify({
+                body: {
+                    type: 'doc',
+                    version: 1,
+                    content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+                },
+            }),
+        });
+    }
+
+    createIssue(
+        projectKey: string,
+        issueType: string,
+        summary: string,
+        description?: string,
+        assigneeId?: string,
+    ): Promise<JiraCreatedIssue> {
+        const fields: Record<string, unknown> = {
+            project: { key: projectKey },
+            issuetype: { name: issueType },
+            summary,
+        };
+        if (description) {
+            fields.description = {
+                type: 'doc',
+                version: 1,
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: description }] }],
+            };
+        }
+        if (assigneeId) fields.assignee = { id: assigneeId };
+        return this.request<JiraCreatedIssue>('/issue', {
+            method: 'POST',
+            body: JSON.stringify({ fields }),
+        });
+    }
+
+    async updateIssue(issueKey: string, fields: Record<string, unknown>): Promise<void> {
+        await this.request(`/issue/${encodeURIComponent(issueKey)}`, {
+            method: 'PUT',
+            body: JSON.stringify({ fields }),
         });
     }
 }

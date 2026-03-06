@@ -70,6 +70,48 @@ const tools = [
             required: ['issueKey', 'transitionId'],
         },
     },
+    {
+        name: 'jira_add_comment',
+        description: 'Add a comment to a Jira issue.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                issueKey: { type: 'string', description: 'The issue key, e.g. NET-1234' },
+                text: { type: 'string', description: 'The comment text' },
+            },
+            required: ['issueKey', 'text'],
+        },
+    },
+    {
+        name: 'jira_create_issue',
+        description: 'Create a new Jira issue.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectKey: { type: 'string', description: 'Project key, e.g. NET' },
+                issueType: { type: 'string', description: 'Issue type, e.g. Task, Bug, Story' },
+                summary: { type: 'string', description: 'Issue summary/title' },
+                description: { type: 'string', description: 'Optional description text' },
+                assigneeId: { type: 'string', description: 'Optional assignee account ID' },
+            },
+            required: ['projectKey', 'issueType', 'summary'],
+        },
+    },
+    {
+        name: 'jira_update_issue',
+        description: 'Update fields of an existing Jira issue (summary, priority name, assignee id, etc.).',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                issueKey: { type: 'string', description: 'The issue key, e.g. NET-1234' },
+                fields: {
+                    type: 'object',
+                    description: 'Fields to update, e.g. {"summary": "New title", "priority": {"name": "High"}}',
+                },
+            },
+            required: ['issueKey', 'fields'],
+        },
+    },
     // Slack
     {
         name: 'slack_list_channels',
@@ -103,6 +145,19 @@ const tools = [
                 text: { type: 'string', description: 'The message text' },
             },
             required: ['channelId', 'text'],
+        },
+    },
+    {
+        name: 'slack_get_thread_replies',
+        description: 'Get replies in a Slack thread.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                channelId: { type: 'string', description: 'The channel ID' },
+                threadTs: { type: 'string', description: 'The timestamp of the parent message (ts field)' },
+                limit: { type: 'number', description: 'Number of replies to fetch (default 20)' },
+            },
+            required: ['channelId', 'threadTs'],
         },
     },
     {
@@ -210,6 +265,53 @@ const tools = [
                 ref: { type: 'string', description: 'Branch or tag (default: project default branch)' },
             },
             required: ['projectId', 'filePath'],
+        },
+    },
+    {
+        name: 'gitlab_list_merge_requests',
+        description: 'List merge requests for a GitLab project.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                state: {
+                    type: 'string',
+                    enum: ['opened', 'closed', 'merged', 'all'],
+                    description: 'Filter by state (default: opened)',
+                },
+                limit: { type: 'number', description: 'Max results (default 20)' },
+            },
+            required: ['projectId'],
+        },
+    },
+    {
+        name: 'gitlab_list_branches',
+        description: 'List branches in a GitLab repository.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                search: { type: 'string', description: 'Optional search string to filter branches' },
+                limit: { type: 'number', description: 'Max results (default 50)' },
+            },
+            required: ['projectId'],
+        },
+    },
+    {
+        name: 'gitlab_list_pipelines',
+        description: 'List CI/CD pipelines for a GitLab project.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                ref: { type: 'string', description: 'Filter by branch or tag name' },
+                status: {
+                    type: 'string',
+                    description: 'Filter by status: created, waiting_for_resource, preparing, pending, running, success, failed, canceled, skipped, manual, scheduled',
+                },
+                limit: { type: 'number', description: 'Max results (default 20)' },
+            },
+            required: ['projectId'],
         },
     },
     {
@@ -321,6 +423,24 @@ async function handleTool(name: string, args: Args): Promise<string> {
             await jira.transitionIssue(args.issueKey, args.transitionId);
             return `Transitioned ${args.issueKey} successfully.`;
         }
+        case 'jira_add_comment': {
+            const comment = await jira.addComment(args.issueKey, args.text);
+            return `Comment added (id: ${comment.id}) to ${args.issueKey}.`;
+        }
+        case 'jira_create_issue': {
+            const created = await jira.createIssue(
+                args.projectKey,
+                args.issueType,
+                args.summary,
+                args.description,
+                args.assigneeId,
+            );
+            return JSON.stringify(created, null, 2);
+        }
+        case 'jira_update_issue': {
+            await jira.updateIssue(args.issueKey, args.fields);
+            return `Updated ${args.issueKey} successfully.`;
+        }
 
         // Slack
         case 'slack_list_channels': {
@@ -338,6 +458,10 @@ async function handleTool(name: string, args: Args): Promise<string> {
         case 'slack_send_message': {
             const result = await slack.sendMessage(args.channelId, args.text);
             return `Message sent to ${result.channel} at ${result.ts}.`;
+        }
+        case 'slack_get_thread_replies': {
+            const replies = await slack.getThreadReplies(args.channelId, args.threadTs, args.limit);
+            return JSON.stringify(replies.map((m) => ({ user: m.user, text: m.text, ts: m.ts })), null, 2);
         }
         case 'slack_open_dm': {
             const channelId = await slack.openDM(args.userId);
@@ -421,6 +545,54 @@ async function handleTool(name: string, args: Args): Promise<string> {
         case 'gitlab_get_file': {
             const file = await gitlab.getFile(args.projectId, args.filePath, args.ref);
             return file.content;
+        }
+        case 'gitlab_list_merge_requests': {
+            const mrs = await gitlab.listMergeRequests(args.projectId, args.state, args.limit);
+            return JSON.stringify(
+                mrs.map((mr) => ({
+                    iid: mr.iid,
+                    title: mr.title,
+                    state: mr.state,
+                    author: mr.author.username,
+                    sourceBranch: mr.source_branch,
+                    targetBranch: mr.target_branch,
+                    updatedAt: mr.updated_at,
+                    webUrl: mr.web_url,
+                })),
+                null,
+                2,
+            );
+        }
+        case 'gitlab_list_branches': {
+            const branches = await gitlab.listBranches(args.projectId, args.search, args.limit);
+            return JSON.stringify(
+                branches.map((b) => ({
+                    name: b.name,
+                    default: b.default,
+                    protected: b.protected,
+                    merged: b.merged,
+                    lastCommit: b.commit.title,
+                    committedAt: b.commit.committed_date,
+                })),
+                null,
+                2,
+            );
+        }
+        case 'gitlab_list_pipelines': {
+            const pipelines = await gitlab.listPipelines(args.projectId, args.ref, args.status, args.limit);
+            return JSON.stringify(
+                pipelines.map((p) => ({
+                    id: p.id,
+                    status: p.status,
+                    ref: p.ref,
+                    sha: p.sha,
+                    createdAt: p.created_at,
+                    updatedAt: p.updated_at,
+                    webUrl: p.web_url,
+                })),
+                null,
+                2,
+            );
         }
         case 'gitlab_create_branch': {
             await gitlab.createBranch(args.projectId, args.branchName, args.ref);

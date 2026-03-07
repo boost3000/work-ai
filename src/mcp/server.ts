@@ -2,9 +2,10 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
-import { loadGitLabConfig, loadJiraConfig, loadSlackConfig } from '../config.ts';
+import { loadGitLabConfig, loadJiraConfig, loadMariaDbConfig, loadSlackConfig } from '../config.ts';
 import { GitLabClient } from '../gitlab/client.ts';
 import { JiraClient } from '../jira/client.ts';
+import { MariaDbClient } from '../mariadb/client.ts';
 import { SlackClient } from '../slack/client.ts';
 import { ConfluenceClient } from '../confluence/client.ts';
 
@@ -13,6 +14,7 @@ const jira = new JiraClient(jiraConfig);
 const slack = new SlackClient(loadSlackConfig());
 const confluence = new ConfluenceClient(jiraConfig);
 const gitlab = new GitLabClient(loadGitLabConfig());
+const mariadb = new MariaDbClient(loadMariaDbConfig());
 
 const server = new Server(
     { name: 'work-ai', version: '1.0.0' },
@@ -354,6 +356,18 @@ const tools = [
             required: ['projectId', 'branch', 'message', 'actions'],
         },
     },
+    // MariaDB
+    {
+        name: 'mariadb_query',
+        description: 'Execute a read-only SQL query (SELECT, SHOW, DESCRIBE, EXPLAIN) against the MariaDB database.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                sql: { type: 'string', description: 'The SQL query to execute' },
+            },
+            required: ['sql'],
+        },
+    },
     {
         name: 'gitlab_create_merge_request',
         description: 'Create a new merge request.',
@@ -611,6 +625,12 @@ async function handleTool(name: string, args: Args): Promise<string> {
                 args.description,
             );
             return JSON.stringify(mr, null, 2);
+        }
+
+        // MariaDB
+        case 'mariadb_query': {
+            const rows = await mariadb.query(args.sql);
+            return JSON.stringify(rows, null, 2);
         }
 
         default:

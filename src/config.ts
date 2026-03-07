@@ -1,6 +1,7 @@
 import '@std/dotenv/load';
 import type { GitLabConfig } from './gitlab/types.ts';
 import type { JiraConfig } from './jira/types.ts';
+import type { MariaDbConfig } from './mariadb/types.ts';
 import type { SlackConfig } from './slack/types.ts';
 
 function requireEnv(name: string): string {
@@ -29,5 +30,14 @@ export function loadGitLabConfig(): GitLabConfig {
     return {
         baseUrl: requireEnv('GITLAB_BASE_URL').replace(/\/+$/, ''),
         token: requireEnv('GITLAB_TOKEN'),
+    };
+}
+
+export function loadMariaDbConfig(): MariaDbConfig {
+    return {
+        hostname: requireEnv('DB_HOSTNAME'),
+        username: requireEnv('DB_USERNAME'),
+        password: requireEnv('DB_PASSWORD'),
+        database: Deno.env.get('DB_DATABASE'),
     };
 }

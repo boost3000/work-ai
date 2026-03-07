@@ -21,6 +21,8 @@
 - `src/gitlab/client.ts` — `GitLabClient` class wrapping GitLab API v4 (Private-Token auth)
 - `src/gitlab/types.ts` — TypeScript types for GitLab API entities
 - `src/gitlab/smoke.ts` — quick smoke test script
+- `src/mariadb/client.ts` — `MariaDbClient` using `mysql2/promise` (read-only: SELECT/SHOW/DESCRIBE/EXPLAIN)
+- `src/mariadb/types.ts` — TypeScript types for MariaDB config
 - `src/mcp/server.ts` — MCP stdio server exposing all clients as Claude Code tools
 - `.mcp.json` — project-scoped MCP config for Claude Code auto-discovery
 
@@ -30,7 +32,8 @@
 - Slack with User Token (xoxp-) auth
 - Confluence reuses Jira credentials (same Atlassian Cloud instance)
 - GitLab self-hosted at gitlab.4players.de, uses Private-Token auth; API v4
+- MariaDB at stagingdb.gaming.4players.de, user `4netplayers_api_v4`, default DB via `DB_DATABASE` env var
 - Config via `.env` file (gitignored), template in `.env.example`
-- No third-party SDKs — plain fetch with typed wrappers
+- No third-party SDKs — plain fetch with typed wrappers (except mysql2 for MariaDB)
 - Jira search uses new `POST /search/jql` endpoint (old `/search` was removed)
 - Confluence uses v2 API for spaces/pages, v1 for CQL search

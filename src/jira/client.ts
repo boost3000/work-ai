@@ -129,4 +129,11 @@ export class JiraClient {
             body: JSON.stringify({ fields }),
         });
     }
+
+    async getAttachments(issueKey: string): Promise<{ id: string; filename: string; size: number; mimeType: string; content: string; created: string }[]> {
+        const issue = await this.request<{ fields: { attachment: { id: string; filename: string; size: number; mimeType: string; content: string; created: string }[] } }>(
+            `/issue/${encodeURIComponent(issueKey)}?fields=attachment`,
+        );
+        return issue.fields.attachment ?? [];
+    }
 }

@@ -71,3 +71,16 @@ export interface SlackPostMessageResponse extends SlackApiResponse {
 export interface SlackOpenDMResponse extends SlackApiResponse {
     channel: { id: string };
 }
+
+export interface SlackFile {
+    id: string;
+    name: string;
+    mimetype: string;
+    url_private: string;
+    size: number;
+    created: number;
+}
+
+export interface SlackFileInfoResponse extends SlackApiResponse {
+    file: SlackFile;
+}

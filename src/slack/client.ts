@@ -3,6 +3,7 @@ import type {
     SlackChannel,
     SlackChannelsResponse,
     SlackConfig,
+    SlackFileInfoResponse,
     SlackMessage,
     SlackMessagesResponse,
     SlackOpenDMResponse,
@@ -98,5 +99,19 @@ export class SlackClient {
             users: userId,
         });
         return result.channel.id;
+    }
+
+    async getFileContent(fileId: string): Promise<{ name: string; mimetype: string; content: string }> {
+        const infoResp = await this.request<SlackFileInfoResponse>('files.info', { file: fileId });
+        const file = infoResp.file;
+        const downloadUrl = file.url_private;
+        const response = await fetch(downloadUrl, {
+            headers: { 'Authorization': `Bearer ${this.token}` },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to download Slack file: ${response.status} ${response.statusText}`);
+        }
+        const content = await response.text();
+        return { name: file.name, mimetype: file.mimetype, content };
     }
 }

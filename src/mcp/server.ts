@@ -383,6 +383,93 @@ const tools = [
             required: ['projectId', 'sourceBranch', 'targetBranch', 'title'],
         },
     },
+    {
+        name: 'gitlab_update_merge_request',
+        description: 'Update an existing merge request (title, description, target branch, assignee).',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                mrIid: { type: 'number', description: 'The MR internal ID (iid)' },
+                title: { type: 'string', description: 'New title' },
+                description: { type: 'string', description: 'New description' },
+                targetBranch: { type: 'string', description: 'New target branch' },
+                assigneeId: { type: 'number', description: 'New assignee user ID' },
+            },
+            required: ['projectId', 'mrIid'],
+        },
+    },
+    {
+        name: 'gitlab_get_pipeline_jobs',
+        description: 'List jobs for a specific pipeline.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                pipelineId: { type: 'number', description: 'Pipeline ID' },
+            },
+            required: ['projectId', 'pipelineId'],
+        },
+    },
+    {
+        name: 'gitlab_get_job_log',
+        description: 'Get the full log output of a CI/CD job.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                jobId: { type: 'number', description: 'Job ID' },
+            },
+            required: ['projectId', 'jobId'],
+        },
+    },
+    {
+        name: 'gitlab_get_merge_request_diff',
+        description: 'Get the file diffs of a merge request.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                mrIid: { type: 'number', description: 'The MR internal ID (iid)' },
+            },
+            required: ['projectId', 'mrIid'],
+        },
+    },
+    {
+        name: 'gitlab_get_merge_request_comments',
+        description: 'Get comments/notes on a merge request.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectId: { type: 'string', description: 'Project ID or URL-encoded path' },
+                mrIid: { type: 'number', description: 'The MR internal ID (iid)' },
+                limit: { type: 'number', description: 'Max results (default 50)' },
+            },
+            required: ['projectId', 'mrIid'],
+        },
+    },
+    {
+        name: 'jira_get_attachments',
+        description: 'List file attachments on a Jira issue.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                issueKey: { type: 'string', description: 'The issue key, e.g. NET-1234' },
+            },
+            required: ['issueKey'],
+        },
+    },
+    {
+        name: 'slack_get_file',
+        description: 'Download and read the content of a file shared in Slack.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                fileId: { type: 'string', description: 'The Slack file ID' },
+            },
+            required: ['fileId'],
+        },
+    },
 ];
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({ tools }));
@@ -455,6 +542,21 @@ async function handleTool(name: string, args: Args): Promise<string> {
             await jira.updateIssue(args.issueKey, args.fields);
             return `Updated ${args.issueKey} successfully.`;
         }
+        case 'jira_get_attachments': {
+            const attachments = await jira.getAttachments(args.issueKey);
+            return JSON.stringify(
+                attachments.map((a) => ({
+                    id: a.id,
+                    filename: a.filename,
+                    size: a.size,
+                    mimeType: a.mimeType,
+                    url: a.content,
+                    created: a.created,
+                })),
+                null,
+                2,
+            );
+        }
 
         // Slack
         case 'slack_list_channels': {
@@ -480,6 +582,10 @@ async function handleTool(name: string, args: Args): Promise<string> {
         case 'slack_open_dm': {
             const channelId = await slack.openDM(args.userId);
             return JSON.stringify({ channelId });
+        }
+        case 'slack_get_file': {
+            const file = await slack.getFileContent(args.fileId);
+            return JSON.stringify({ name: file.name, mimetype: file.mimetype, content: file.content }, null, 2);
         }
 
         // Confluence
@@ -625,6 +731,65 @@ async function handleTool(name: string, args: Args): Promise<string> {
                 args.description,
             );
             return JSON.stringify(mr, null, 2);
+        }
+        case 'gitlab_update_merge_request': {
+            const mr = await gitlab.updateMergeRequest(args.projectId, args.mrIid, {
+                title: args.title,
+                description: args.description,
+                target_branch: args.targetBranch,
+                assignee_id: args.assigneeId,
+            });
+            return JSON.stringify({ iid: mr.iid, title: mr.title, web_url: mr.web_url }, null, 2);
+        }
+        case 'gitlab_get_pipeline_jobs': {
+            const jobs = await gitlab.getPipelineJobs(args.projectId, args.pipelineId);
+            return JSON.stringify(
+                jobs.map((j) => ({
+                    id: j.id,
+                    name: j.name,
+                    stage: j.stage,
+                    status: j.status,
+                    duration: j.duration,
+                    webUrl: j.web_url,
+                })),
+                null,
+                2,
+            );
+        }
+        case 'gitlab_get_job_log': {
+            return await gitlab.getJobLog(args.projectId, args.jobId);
+        }
+        case 'gitlab_get_merge_request_diff': {
+            const diffs = await gitlab.getMergeRequestDiff(args.projectId, args.mrIid);
+            return JSON.stringify(
+                diffs.map((d) => ({
+                    oldPath: d.old_path,
+                    newPath: d.new_path,
+                    newFile: d.new_file,
+                    deletedFile: d.deleted_file,
+                    renamedFile: d.renamed_file,
+                    diff: d.diff,
+                })),
+                null,
+                2,
+            );
+        }
+        case 'gitlab_get_merge_request_comments': {
+            const notes = await gitlab.getMergeRequestComments(args.projectId, args.mrIid, args.limit);
+            return JSON.stringify(
+                notes
+                    .filter((n) => !n.system)
+                    .map((n) => ({
+                        id: n.id,
+                        author: n.author.username,
+                        body: n.body,
+                        createdAt: n.created_at,
+                        resolvable: n.resolvable,
+                        resolved: n.resolved,
+                    })),
+                null,
+                2,
+            );
         }
 
         // MariaDB

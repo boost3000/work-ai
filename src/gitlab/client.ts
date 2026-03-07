@@ -2,7 +2,10 @@ import type {
     GitLabBranch,
     GitLabConfig,
     GitLabFile,
+    GitLabJob,
     GitLabMergeRequest,
+    GitLabMRDiff,
+    GitLabMRNote,
     GitLabPipeline,
     GitLabProject,
     GitLabTreeItem,
@@ -147,5 +150,47 @@ export class GitLabClient {
                 description,
             }),
         });
+    }
+
+    async updateMergeRequest(
+        projectId: string | number,
+        mrIid: number,
+        fields: { title?: string; description?: string; target_branch?: string; assignee_id?: number },
+    ): Promise<GitLabMergeRequest> {
+        return await this.request<GitLabMergeRequest>(
+            `/projects/${encodeURIComponent(projectId)}/merge_requests/${mrIid}`,
+            { method: 'PUT', body: JSON.stringify(fields) },
+        );
+    }
+
+    getPipelineJobs(projectId: string | number, pipelineId: number): Promise<GitLabJob[]> {
+        return this.request<GitLabJob[]>(
+            `/projects/${encodeURIComponent(projectId)}/pipelines/${pipelineId}/jobs`,
+        );
+    }
+
+    async getJobLog(projectId: string | number, jobId: number): Promise<string> {
+        const url = `${this.baseUrl}/api/v4/projects/${encodeURIComponent(projectId)}/jobs/${jobId}/trace`;
+        const response = await fetch(url, {
+            headers: { 'PRIVATE-TOKEN': this.token, 'Accept': 'text/plain' },
+        });
+        if (!response.ok) {
+            const body = await response.text();
+            throw new Error(`GitLab API error ${response.status} ${response.statusText}: ${body}`);
+        }
+        return response.text();
+    }
+
+    getMergeRequestDiff(projectId: string | number, mrIid: number): Promise<GitLabMRDiff[]> {
+        return this.request<GitLabMRDiff[]>(
+            `/projects/${encodeURIComponent(projectId)}/merge_requests/${mrIid}/diffs`,
+        );
+    }
+
+    getMergeRequestComments(projectId: string | number, mrIid: number, limit = 50): Promise<GitLabMRNote[]> {
+        const params = new URLSearchParams({ per_page: String(limit) });
+        return this.request<GitLabMRNote[]>(
+            `/projects/${encodeURIComponent(projectId)}/merge_requests/${mrIid}/notes?${params}`,
+        );
     }
 }

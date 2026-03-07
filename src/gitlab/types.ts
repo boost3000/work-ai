@@ -62,3 +62,35 @@ export interface GitLabPipeline {
     updated_at: string;
     web_url: string;
 }
+
+export interface GitLabJob {
+    id: number;
+    name: string;
+    stage: string;
+    status: string;
+    created_at: string;
+    started_at: string | null;
+    finished_at: string | null;
+    duration: number | null;
+    web_url: string;
+}
+
+export interface GitLabMRDiff {
+    old_path: string;
+    new_path: string;
+    diff: string;
+    new_file: boolean;
+    deleted_file: boolean;
+    renamed_file: boolean;
+}
+
+export interface GitLabMRNote {
+    id: number;
+    body: string;
+    author: { name: string; username: string };
+    created_at: string;
+    updated_at: string;
+    system: boolean;
+    resolvable: boolean;
+    resolved: boolean | null;
+}

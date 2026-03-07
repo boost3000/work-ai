@@ -32,7 +32,7 @@
 - Slack with User Token (xoxp-) auth
 - Confluence reuses Jira credentials (same Atlassian Cloud instance)
 - GitLab self-hosted at gitlab.4players.de, uses Private-Token auth; API v4
-- MariaDB at stagingdb.gaming.4players.de, user `4netplayers_api_v4`, default DB via `DB_DATABASE` env var
+- MariaDB via. tunnel and credentials via .env
 - Config via `.env` file (gitignored), template in `.env.example`
 - No third-party SDKs — plain fetch with typed wrappers (except mysql2 for MariaDB)
 - Jira search uses new `POST /search/jql` endpoint (old `/search` was removed)

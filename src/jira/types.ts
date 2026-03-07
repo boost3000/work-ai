@@ -87,3 +87,19 @@ export interface JiraCreatedIssue {
     key: string;
     self: string;
 }
+
+export interface JiraBoard {
+    id: number;
+    name: string;
+    type: string;
+}
+
+export interface JiraSprint {
+    id: number;
+    name: string;
+    state: 'active' | 'closed' | 'future';
+    startDate?: string;
+    endDate?: string;
+    goal?: string;
+    boardId: number;
+}

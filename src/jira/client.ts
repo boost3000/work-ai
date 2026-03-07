@@ -1,11 +1,14 @@
 import type {
+    JiraBoard,
     JiraComment,
     JiraConfig,
     JiraCreatedIssue,
     JiraIssue,
     JiraSearchResult,
+    JiraSprint,
     JiraTransition,
     JiraTransitionsResponse,
+    JiraUser,
 } from './types.ts';
 
 export class JiraClient {
@@ -123,6 +126,12 @@ export class JiraClient {
         });
     }
 
+    searchUsers(query: string, maxResults = 10): Promise<JiraUser[]> {
+        return this.request<JiraUser[]>(
+            `/user/search?query=${encodeURIComponent(query)}&maxResults=${maxResults}`,
+        );
+    }
+
     async updateIssue(issueKey: string, fields: Record<string, unknown>): Promise<void> {
         await this.request(`/issue/${encodeURIComponent(issueKey)}`, {
             method: 'PUT',
@@ -135,5 +144,48 @@ export class JiraClient {
             `/issue/${encodeURIComponent(issueKey)}?fields=attachment`,
         );
         return issue.fields.attachment ?? [];
+    }
+
+    private async agileRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+        const url = `${this.baseUrl}/rest/agile/1.0${path}`;
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                'Authorization': this.authHeader,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                ...options.headers,
+            },
+        });
+
+        if (!response.ok) {
+            const body = await response.text();
+            throw new Error(`Jira Agile API error ${response.status} ${response.statusText}: ${body}`);
+        }
+
+        if (response.status === 204) {
+            return undefined as T;
+        }
+
+        return response.json() as Promise<T>;
+    }
+
+    async getBoards(projectKey?: string): Promise<JiraBoard[]> {
+        const params = projectKey ? `?projectKeyOrId=${encodeURIComponent(projectKey)}` : '';
+        const result = await this.agileRequest<{ values: JiraBoard[] }>(`/board${params}`);
+        return result.values;
+    }
+
+    async getSprints(boardId: number, state?: 'active' | 'closed' | 'future'): Promise<JiraSprint[]> {
+        const params = state ? `?state=${state}` : '';
+        const result = await this.agileRequest<{ values: JiraSprint[] }>(`/board/${boardId}/sprint${params}`);
+        return result.values;
+    }
+
+    async addIssueToSprint(sprintId: number, issueKeys: string[]): Promise<void> {
+        await this.agileRequest(`/sprint/${sprintId}/issue`, {
+            method: 'POST',
+            body: JSON.stringify({ issues: issueKeys }),
+        });
     }
 }

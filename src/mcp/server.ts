@@ -449,6 +449,60 @@ const tools = [
         },
     },
     {
+        name: 'jira_get_boards',
+        description: 'List Jira boards, optionally filtered by project key.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                projectKey: { type: 'string', description: 'Optional project key to filter boards, e.g. NET' },
+            },
+        },
+    },
+    {
+        name: 'jira_get_sprints',
+        description: 'List sprints for a Jira board.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                boardId: { type: 'number', description: 'The board ID' },
+                state: {
+                    type: 'string',
+                    enum: ['active', 'closed', 'future'],
+                    description: 'Filter by sprint state (default: all)',
+                },
+            },
+            required: ['boardId'],
+        },
+    },
+    {
+        name: 'jira_add_issues_to_sprint',
+        description: 'Add one or more Jira issues to a sprint.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                sprintId: { type: 'number', description: 'The sprint ID' },
+                issueKeys: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'List of issue keys to add, e.g. ["NET-1234", "NET-1235"]',
+                },
+            },
+            required: ['sprintId', 'issueKeys'],
+        },
+    },
+    {
+        name: 'jira_search_users',
+        description: 'Search Jira users by name or email. Returns accountId, displayName, emailAddress.',
+        inputSchema: {
+            type: 'object' as const,
+            properties: {
+                query: { type: 'string', description: 'Name or email to search for' },
+                maxResults: { type: 'number', description: 'Max results (default 10)' },
+            },
+            required: ['query'],
+        },
+    },
+    {
         name: 'jira_get_attachments',
         description: 'List file attachments on a Jira issue.',
         inputSchema: {
@@ -541,6 +595,37 @@ async function handleTool(name: string, args: Args): Promise<string> {
         case 'jira_update_issue': {
             await jira.updateIssue(args.issueKey, args.fields);
             return `Updated ${args.issueKey} successfully.`;
+        }
+        case 'jira_get_boards': {
+            const boards = await jira.getBoards(args.projectKey);
+            return JSON.stringify(boards.map((b) => ({ id: b.id, name: b.name, type: b.type })), null, 2);
+        }
+        case 'jira_get_sprints': {
+            const sprints = await jira.getSprints(args.boardId, args.state);
+            return JSON.stringify(
+                sprints.map((s) => ({
+                    id: s.id,
+                    name: s.name,
+                    state: s.state,
+                    startDate: s.startDate,
+                    endDate: s.endDate,
+                    goal: s.goal,
+                })),
+                null,
+                2,
+            );
+        }
+        case 'jira_add_issues_to_sprint': {
+            await jira.addIssueToSprint(args.sprintId, args.issueKeys);
+            return `Added ${args.issueKeys.join(', ')} to sprint ${args.sprintId}.`;
+        }
+        case 'jira_search_users': {
+            const users = await jira.searchUsers(args.query, args.maxResults);
+            return JSON.stringify(
+                users.map((u) => ({ accountId: u.accountId, displayName: u.displayName, email: u.emailAddress })),
+                null,
+                2,
+            );
         }
         case 'jira_get_attachments': {
             const attachments = await jira.getAttachments(args.issueKey);

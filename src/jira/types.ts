@@ -103,3 +103,15 @@ export interface JiraSprint {
     goal?: string;
     boardId: number;
 }
+
+export interface JiraCommentsResponse {
+    comments: JiraComment[];
+    total: number;
+}
+
+export interface JiraIssueLinkType {
+    id: string;
+    name: string;
+    inward: string;
+    outward: string;
+}

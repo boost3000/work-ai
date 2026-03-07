@@ -8,6 +8,8 @@ import type {
     SlackMessagesResponse,
     SlackOpenDMResponse,
     SlackPostMessageResponse,
+    SlackSearchMatch,
+    SlackSearchResponse,
     SlackUser,
     SlackUsersResponse,
 } from './types.ts';
@@ -99,6 +101,24 @@ export class SlackClient {
             users: userId,
         });
         return result.channel.id;
+    }
+
+    async searchMessages(query: string, limit = 20): Promise<SlackSearchMatch[]> {
+        const result = await this.request<SlackSearchResponse>('search.messages', {
+            query,
+            count: String(limit),
+            sort: 'timestamp',
+            sort_dir: 'desc',
+        });
+        return result.messages.matches;
+    }
+
+    async addReaction(channelId: string, ts: string, emoji: string): Promise<void> {
+        await this.request<SlackApiResponse>('reactions.add', {
+            channel: channelId,
+            timestamp: ts,
+            name: emoji,
+        });
     }
 
     async getFileContent(fileId: string): Promise<{ name: string; mimetype: string; content: string }> {

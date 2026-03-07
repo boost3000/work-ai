@@ -1,5 +1,6 @@
 import type {
     GitLabBranch,
+    GitLabCommit,
     GitLabConfig,
     GitLabFile,
     GitLabJob,
@@ -191,6 +192,48 @@ export class GitLabClient {
         const params = new URLSearchParams({ per_page: String(limit) });
         return this.request<GitLabMRNote[]>(
             `/projects/${encodeURIComponent(projectId)}/merge_requests/${mrIid}/notes?${params}`,
+        );
+    }
+
+    addMergeRequestComment(projectId: string | number, mrIid: number, body: string): Promise<GitLabMRNote> {
+        return this.request<GitLabMRNote>(
+            `/projects/${encodeURIComponent(projectId)}/merge_requests/${mrIid}/notes`,
+            { method: 'POST', body: JSON.stringify({ body }) },
+        );
+    }
+
+    getMergeRequest(projectId: string | number, mrIid: number): Promise<GitLabMergeRequest> {
+        return this.request<GitLabMergeRequest>(
+            `/projects/${encodeURIComponent(projectId)}/merge_requests/${mrIid}`,
+        );
+    }
+
+    listCommits(projectId: string | number, ref?: string, limit = 20): Promise<GitLabCommit[]> {
+        const params = new URLSearchParams({ per_page: String(limit) });
+        if (ref) params.set('ref_name', ref);
+        return this.request<GitLabCommit[]>(
+            `/projects/${encodeURIComponent(projectId)}/repository/commits?${params}`,
+        );
+    }
+
+    async triggerPipeline(projectId: string | number, ref: string): Promise<GitLabPipeline> {
+        return await this.request<GitLabPipeline>(
+            `/projects/${encodeURIComponent(projectId)}/pipeline`,
+            { method: 'POST', body: JSON.stringify({ ref }) },
+        );
+    }
+
+    async retryJob(projectId: string | number, jobId: number): Promise<GitLabJob> {
+        return await this.request<GitLabJob>(
+            `/projects/${encodeURIComponent(projectId)}/jobs/${jobId}/retry`,
+            { method: 'POST' },
+        );
+    }
+
+    async deleteBranch(projectId: string | number, branchName: string): Promise<void> {
+        await this.request(
+            `/projects/${encodeURIComponent(projectId)}/repository/branches/${encodeURIComponent(branchName)}`,
+            { method: 'DELETE' },
         );
     }
 }

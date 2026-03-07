@@ -287,6 +287,75 @@ server.registerTool(
     },
 );
 
+server.registerTool(
+    'jira_get_comments',
+    {
+        description: 'Get comments on a Jira issue.',
+        inputSchema: {
+            issueKey: z.string().describe('The issue key, e.g. NET-1234'),
+        },
+    },
+    async ({ issueKey }) => {
+        const comments = await jira.getComments(issueKey);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify(
+                    comments.map((c) => ({
+                        id: c.id,
+                        author: c.author.displayName,
+                        created: c.created,
+                        body: c.body,
+                    })),
+                    null,
+                    2,
+                ),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'jira_get_link_types',
+    {
+        description: 'List available Jira issue link types (e.g. "blocks", "relates to", "is cloned by").',
+    },
+    async () => {
+        const types = await jira.getIssueLinkTypes();
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify(
+                    types.map((t) => ({ id: t.id, name: t.name, inward: t.inward, outward: t.outward })),
+                    null,
+                    2,
+                ),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'jira_link_issues',
+    {
+        description: 'Link two Jira issues together. Use jira_get_link_types to find available link type names.',
+        inputSchema: {
+            inwardIssueKey: z.string().describe('The inward issue key, e.g. NET-1234'),
+            outwardIssueKey: z.string().describe('The outward issue key, e.g. NET-5678'),
+            linkTypeName: z.string().describe('Link type name, e.g. "blocks", "relates to", "is cloned by"'),
+        },
+    },
+    async ({ inwardIssueKey, outwardIssueKey, linkTypeName }) => {
+        await jira.linkIssues(inwardIssueKey, outwardIssueKey, linkTypeName);
+        return {
+            content: [{
+                type: 'text',
+                text: `Linked ${inwardIssueKey} → ${outwardIssueKey} with type "${linkTypeName}".`,
+            }],
+        };
+    },
+);
+
 // Slack
 server.registerTool(
     'slack_list_channels',
@@ -405,6 +474,53 @@ server.registerTool(
     },
 );
 
+server.registerTool(
+    'slack_search_messages',
+    {
+        description: 'Search Slack messages by keyword across all channels.',
+        inputSchema: {
+            query: z.string().describe('Search query text'),
+            limit: z.number().optional().describe('Max results (default 20)'),
+        },
+    },
+    async ({ query, limit }) => {
+        const matches = await slack.searchMessages(query, limit);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify(
+                    matches.map((m) => ({
+                        channel: m.channel.name,
+                        channelId: m.channel.id,
+                        user: m.username,
+                        text: m.text,
+                        ts: m.ts,
+                        permalink: m.permalink,
+                    })),
+                    null,
+                    2,
+                ),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'slack_add_reaction',
+    {
+        description: 'Add an emoji reaction to a Slack message.',
+        inputSchema: {
+            channelId: z.string().describe('The channel ID'),
+            ts: z.string().describe('Timestamp of the message to react to'),
+            emoji: z.string().describe('Emoji name without colons, e.g. "thumbsup", "white_check_mark"'),
+        },
+    },
+    async ({ channelId, ts, emoji }) => {
+        await slack.addReaction(channelId, ts, emoji);
+        return { content: [{ type: 'text', text: `Added :${emoji}: reaction to message ${ts}.` }] };
+    },
+);
+
 // Confluence
 server.registerTool(
     'confluence_list_spaces',
@@ -488,6 +604,54 @@ server.registerTool(
                 type: 'text',
                 text: JSON.stringify(
                     results.map((r) => ({ id: r.content.id, title: r.title, excerpt: r.excerpt })),
+                    null,
+                    2,
+                ),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'confluence_create_page',
+    {
+        description: 'Create a new Confluence page in a space. Content should be Confluence Storage Format (HTML-like XML).',
+        inputSchema: {
+            spaceId: z.string().describe('The space ID (numeric, from confluence_list_spaces)'),
+            title: z.string().describe('Page title'),
+            content: z.string().describe('Page body in Confluence Storage Format (e.g. "<p>Hello world</p>")'),
+            parentId: z.string().optional().describe('Optional parent page ID to nest this page under'),
+        },
+    },
+    async ({ spaceId, title, content, parentId }) => {
+        const page = await confluence.createPage(spaceId, title, content, parentId);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify({ id: page.id, title: page.title, webUrl: page._links.webui }, null, 2),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'confluence_update_page',
+    {
+        description: 'Update an existing Confluence page. Requires the current version number (from confluence_get_page).',
+        inputSchema: {
+            pageId: z.string().describe('The page ID'),
+            title: z.string().describe('Page title (can be unchanged)'),
+            content: z.string().describe('New page body in Confluence Storage Format'),
+            version: z.number().describe('Current version number of the page (will be incremented by 1)'),
+        },
+    },
+    async ({ pageId, title, content, version }) => {
+        const page = await confluence.updatePage(pageId, title, content, version);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify(
+                    { id: page.id, title: page.title, version: page.version?.number, webUrl: page._links.webui },
                     null,
                     2,
                 ),
@@ -892,6 +1056,138 @@ server.registerTool(
                 ),
             }],
         };
+    },
+);
+
+server.registerTool(
+    'gitlab_get_merge_request',
+    {
+        description: 'Get full details of a single merge request including description, reviewers, and labels.',
+        inputSchema: {
+            projectId: z.string().describe('Project ID or URL-encoded path'),
+            mrIid: z.number().describe('The MR internal ID (iid)'),
+        },
+    },
+    async ({ projectId, mrIid }) => {
+        const mr = await gitlab.getMergeRequest(projectId, mrIid);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify(
+                    {
+                        iid: mr.iid,
+                        title: mr.title,
+                        state: mr.state,
+                        description: mr.description,
+                        author: mr.author.username,
+                        sourceBranch: mr.source_branch,
+                        targetBranch: mr.target_branch,
+                        createdAt: mr.created_at,
+                        updatedAt: mr.updated_at,
+                        webUrl: mr.web_url,
+                    },
+                    null,
+                    2,
+                ),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'gitlab_add_mr_comment',
+    {
+        description: 'Post a comment on a GitLab merge request.',
+        inputSchema: {
+            projectId: z.string().describe('Project ID or URL-encoded path'),
+            mrIid: z.number().describe('The MR internal ID (iid)'),
+            body: z.string().describe('Comment text'),
+        },
+    },
+    async ({ projectId, mrIid, body }) => {
+        const note = await gitlab.addMergeRequestComment(projectId, mrIid, body);
+        return { content: [{ type: 'text', text: `Comment posted (id: ${note.id}) on MR !${mrIid}.` }] };
+    },
+);
+
+server.registerTool(
+    'gitlab_list_commits',
+    {
+        description: 'List recent commits in a GitLab repository, optionally filtered by branch.',
+        inputSchema: {
+            projectId: z.string().describe('Project ID or URL-encoded path'),
+            ref: z.string().optional().describe('Branch or tag name (default: project default branch)'),
+            limit: z.number().optional().describe('Max results (default 20)'),
+        },
+    },
+    async ({ projectId, ref, limit }) => {
+        const commits = await gitlab.listCommits(projectId, ref, limit);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify(
+                    commits.map((c) => ({
+                        id: c.short_id,
+                        title: c.title,
+                        author: c.author_name,
+                        date: c.authored_date,
+                        webUrl: c.web_url,
+                    })),
+                    null,
+                    2,
+                ),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'gitlab_trigger_pipeline',
+    {
+        description: 'Trigger a new CI/CD pipeline for a branch or tag.',
+        inputSchema: {
+            projectId: z.string().describe('Project ID or URL-encoded path'),
+            ref: z.string().describe('Branch or tag to run the pipeline on'),
+        },
+    },
+    async ({ projectId, ref }) => {
+        const pipeline = await gitlab.triggerPipeline(projectId, ref);
+        return {
+            content: [{
+                type: 'text',
+                text: JSON.stringify({ id: pipeline.id, status: pipeline.status, webUrl: pipeline.web_url }, null, 2),
+            }],
+        };
+    },
+);
+
+server.registerTool(
+    'gitlab_retry_job',
+    {
+        description: 'Retry a failed or cancelled CI/CD job.',
+        inputSchema: {
+            projectId: z.string().describe('Project ID or URL-encoded path'),
+            jobId: z.number().describe('Job ID'),
+        },
+    },
+    async ({ projectId, jobId }) => {
+        const job = await gitlab.retryJob(projectId, jobId);
+        return { content: [{ type: 'text', text: `Job ${job.id} (${job.name}) retried. Status: ${job.status}.` }] };
+    },
+);
+
+server.registerTool(
+    'gitlab_delete_branch',
+    {
+        description: 'Delete a branch from a GitLab repository.',
+        inputSchema: {
+            projectId: z.string().describe('Project ID or URL-encoded path'),
+            branchName: z.string().describe('Name of the branch to delete'),
+        },
+    },
+    async ({ projectId, branchName }) => {
+        await gitlab.deleteBranch(projectId, branchName);
+        return { content: [{ type: 'text', text: `Branch '${branchName}' deleted from project ${projectId}.` }] };
     },
 );
 

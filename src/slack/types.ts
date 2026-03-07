@@ -84,3 +84,21 @@ export interface SlackFile {
 export interface SlackFileInfoResponse extends SlackApiResponse {
     file: SlackFile;
 }
+
+export interface SlackSearchMatch {
+    type: string;
+    user: string;
+    username: string;
+    text: string;
+    ts: string;
+    channel: { id: string; name: string };
+    permalink: string;
+}
+
+export interface SlackSearchResponse extends SlackApiResponse {
+    messages: {
+        matches: SlackSearchMatch[];
+        total: number;
+        paging: { count: number; total: number; page: number; pages: number };
+    };
+}

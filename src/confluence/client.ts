@@ -52,6 +52,48 @@ export class ConfluenceClient {
         return this.request<ConfluencePage>(`/pages/${encodeURIComponent(pageId)}${params}`);
     }
 
+    private async write<T>(path: string, options: RequestInit): Promise<T> {
+        const url = `${this.baseUrl}/wiki/api/v2${path}`;
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                'Authorization': this.authHeader,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                ...options.headers,
+            },
+        });
+
+        if (!response.ok) {
+            const body = await response.text();
+            throw new Error(`Confluence API error ${response.status} ${response.statusText}: ${body}`);
+        }
+
+        return response.json() as Promise<T>;
+    }
+
+    createPage(spaceId: string, title: string, content: string, parentId?: string): Promise<ConfluencePage> {
+        const body: Record<string, unknown> = {
+            spaceId,
+            title,
+            body: { representation: 'storage', value: content },
+        };
+        if (parentId) body.parentId = parentId;
+        return this.write<ConfluencePage>('/pages', { method: 'POST', body: JSON.stringify(body) });
+    }
+
+    async updatePage(pageId: string, title: string, content: string, version: number): Promise<ConfluencePage> {
+        return await this.write<ConfluencePage>(`/pages/${encodeURIComponent(pageId)}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                id: pageId,
+                title,
+                version: { number: version },
+                body: { representation: 'storage', value: content },
+            }),
+        });
+    }
+
     async search(cql: string, limit = 25): Promise<ConfluenceSearchResult[]> {
         const params = new URLSearchParams({ cql, limit: String(limit) });
         const result = await this.request<ConfluenceSearchResponse>(

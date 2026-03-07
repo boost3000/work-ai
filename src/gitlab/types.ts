@@ -94,3 +94,18 @@ export interface GitLabMRNote {
     resolvable: boolean;
     resolved: boolean | null;
 }
+
+export interface GitLabCommit {
+    id: string;
+    short_id: string;
+    title: string;
+    author_name: string;
+    authored_date: string;
+    committed_date: string;
+    message: string;
+    web_url: string;
+}
+
+export interface GitLabPipelineDetail extends GitLabPipeline {
+    user: { username: string } | null;
+}

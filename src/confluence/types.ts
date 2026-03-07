@@ -26,6 +26,7 @@ export interface ConfluencePage {
     status: string;
     title: string;
     spaceId: string;
+    version?: { number: number };
     body?: ConfluencePageBody;
     _links: { webui?: string };
 }

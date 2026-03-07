@@ -1,8 +1,10 @@
 import type {
     JiraBoard,
     JiraComment,
+    JiraCommentsResponse,
     JiraConfig,
     JiraCreatedIssue,
+    JiraIssueLinkType,
     JiraIssue,
     JiraSearchResult,
     JiraSprint,
@@ -186,6 +188,33 @@ export class JiraClient {
         await this.agileRequest(`/sprint/${sprintId}/issue`, {
             method: 'POST',
             body: JSON.stringify({ issues: issueKeys }),
+        });
+    }
+
+    async getComments(issueKey: string): Promise<JiraComment[]> {
+        const result = await this.request<JiraCommentsResponse>(
+            `/issue/${encodeURIComponent(issueKey)}/comment?orderBy=created`,
+        );
+        return result.comments;
+    }
+
+    async getIssueLinkTypes(): Promise<JiraIssueLinkType[]> {
+        const result = await this.request<{ issueLinkTypes: JiraIssueLinkType[] }>('/issueLinkType');
+        return result.issueLinkTypes;
+    }
+
+    async linkIssues(
+        inwardIssueKey: string,
+        outwardIssueKey: string,
+        linkTypeName: string,
+    ): Promise<void> {
+        await this.request('/issueLink', {
+            method: 'POST',
+            body: JSON.stringify({
+                type: { name: linkTypeName },
+                inwardIssue: { key: inwardIssueKey },
+                outwardIssue: { key: outwardIssueKey },
+            }),
         });
     }
 }

@@ -11,7 +11,7 @@
 
 At the start of each conversation, check if this is a freshly pulled repo by verifying whether the `.knowledge` folder is empty or missing. If it is, treat this as a first-time setup and guide the user through the following steps **in order** before doing anything else:
 
-1. **Credentials setup** — Open `.env` and compare it against `.env.example`. For every missing or placeholder value, ask the user to provide it. Do not proceed until all required credentials are filled in.
+1. **Credentials setup** — Open `.env` and compare it against `.env.example`. For every missing or placeholder value, ask the user to provide it. Do not proceed until all required credentials are filled in, also inform the user about the permissions, that are necessary for the api key, respectively.
 2. **Settings & Permissions** — Walk through the `Settings & Permissions` section of this file. Verify that `.claude/settings.local.json` exists and that all tools in `src/mcp/server.ts` are listed in `permissions.allow`. Fix any gaps.
 3. **Extend knowledge** — Run the `extend-knowledge` skill to populate the `.knowledge` folder with fresh data about the company, projects, and people.
 

@@ -15,6 +15,14 @@
 - Read confluence to get additional info about the company, their projects, policies and workflows.
 - Handle emails on <https://outlook.office.com/>. (not possible at the moment, as i don't have permissions right now)
 
+## Work Behaviour
+
+- When working on a Jira ticket, always use the ticket ID as the GitLab branch name (e.g. `NET-5451`).
+- Only send Slack messages or post comments if explicitly asked.
+- Do not push to GitLab or create/merge MRs without explicit confirmation.
+- Transition Jira ticket status as work progresses (e.g. move to "In Progress" when starting, "Feedback" when an MR is open).
+- Before messaging a person on Slack, look up their user ID in `.knowledge/` to avoid querying the API unnecessarily.
+
 ## Technical details
 
 - In `./src` folder are api connectors for several work tools that the ai can use via. mpc.

@@ -20,6 +20,11 @@
 - In `./src` folder are api connectors for several work tools that the ai can use via. mpc.
 - Read the `./src` folder and use mcp implementation provided in this project to execute commands when needed. If it's not possible, avoid writing helper scripts.
 
+## Settings & Permissions
+
+- Whenever a new MCP tool is added to `src/mcp/server.ts`, also add it to the `permissions.allow` list in `.claude/settings.local.json` using the format `mcp__work-ai__<tool_name>`.
+- Keep `.claude/settings.local.json` in sync with all tools registered in `src/mcp/server.ts`.
+
 ## Persistent Knowledge
 
 - Created a folder [.knowledge](../.knowledge) in project route if not existing.

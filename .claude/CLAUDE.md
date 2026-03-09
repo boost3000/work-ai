@@ -1,37 +1,11 @@
 # work-ai
 
-## General behaviour
-
-- Confirm at the beginning of each conversation, that you read this file.
-- Never guess if you are unsure. Ask me instead.
-- Be honest, no sugarcoating.
-- Maintain a [MEMORY.md](./MEMORY.md) file in this `.claude` folder. Update it when you learn something significant
-  about the project (architecture, conventions, key decisions). Read it at the start of each conversation.
-
 ## Project idea
 
 - Automate work. Handle tickets from Jira, communicate with work colleagues via. Slack.
 - Write and edit code and interact with gitlab.
 - Read confluence to get additional info about the company, their projects, policies and workflows.
 - Handle emails on <https://outlook.office.com/>. (not possible at the moment, as i don't have permissions right now)
-
-## Work Behaviour
-
-- When working on a Jira ticket, always use the ticket ID as the GitLab branch name (e.g. `NET-5451`).
-- Only send Slack messages or post comments if explicitly asked.
-- Do not push to GitLab or create/merge MRs without explicit confirmation.
-- Transition Jira ticket status as work progresses (e.g. move to "In Progress" when starting, "Feedback" when an MR is open).
-- Before messaging a person on Slack, look up their user ID in `.knowledge/` to avoid querying the API unnecessarily.
-
-## Technical details
-
-- In `./src` folder are api connectors for several work tools that the ai can use via. mpc.
-- Read the `./src` folder and use mcp implementation provided in this project to execute commands when needed. If it's not possible, avoid writing helper scripts.
-
-## Settings & Permissions
-
-- Whenever a new MCP tool is added to `src/mcp/server.ts`, also add it to the `permissions.allow` list in `.claude/settings.local.json` using the format `mcp__work-ai__<tool_name>`.
-- Keep `.claude/settings.local.json` in sync with all tools registered in `src/mcp/server.ts`.
 
 ## Fresh Setup Detection
 
@@ -43,6 +17,22 @@ At the start of each conversation, check if this is a freshly pulled repo by ver
 
 Only after all three steps are complete should you proceed with the user's actual request.
 
+## General behaviour
+
+- Confirm at the beginning of each conversation, that you read this file.
+- Never guess if you are unsure. Ask me instead.
+- Be honest, no sugarcoating.
+- Maintain a [MEMORY.md](./MEMORY.md) file in this `.claude` folder. Update it when you learn something significant
+  about the project (architecture, conventions, key decisions). Read it at the start of each conversation.
+
+## Work Behaviour
+
+- When working on a Jira ticket, always use the ticket ID as the GitLab branch name (e.g. `NET-5451`).
+- Only send Slack messages or post comments if explicitly asked.
+- Do not push to GitLab or create/merge MRs without explicit confirmation.
+- Transition Jira ticket status as work progresses (e.g. move to "In Progress" when starting, "Feedback" when an MR is open).
+- Before messaging a person on Slack, look up their user ID in `.knowledge/` to avoid querying the API unnecessarily.
+
 ## Persistent Knowledge
 
 - Created a folder [.knowledge](../.knowledge) in project route if not existing.
@@ -50,3 +40,13 @@ Only after all three steps are complete should you proceed with the user's actua
   the company, the codebase, the infrastructure and the people who work there.
 - You should also write files in `.knowledge` folder that are not human readable if it makes you more capable. These must be prefixed with `_ai_`.
 - Don't save personal infos to MEMORY.md but to `.knowledge`.
+
+## Technical details
+
+- In `./src` folder are api connectors for several work tools that the ai can use via. mpc.
+- Read the `./src` folder and use mcp implementation provided in this project to execute commands when needed. If it's not possible, avoid writing helper scripts.
+
+## Settings & Permissions
+
+- Whenever a new MCP tool is added to `src/mcp/server.ts`, also add it to the `permissions.allow` list in `.claude/settings.local.json` using the format `mcp__work-ai__<tool_name>`.
+- Keep `.claude/settings.local.json` in sync with all tools registered in `src/mcp/server.ts`.

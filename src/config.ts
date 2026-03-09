@@ -38,6 +38,6 @@ export function loadMariaDbConfig(): MariaDbConfig {
         hostname: requireEnv('DB_HOSTNAME'),
         username: requireEnv('DB_USERNAME'),
         password: requireEnv('DB_PASSWORD'),
-        database: Deno.env.get('DB_DATABASE'),
+        database: requireEnv('DB_DATABASE'),
     };
 }

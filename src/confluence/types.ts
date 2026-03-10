@@ -37,7 +37,7 @@ export interface ConfluencePagesResponse {
 }
 
 export interface ConfluenceSearchResult {
-    content: ConfluencePage;
+    content?: ConfluencePage;
     title: string;
     excerpt: string;
     lastModified: string;

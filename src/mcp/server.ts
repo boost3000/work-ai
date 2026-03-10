@@ -603,7 +603,7 @@ server.registerTool(
             content: [{
                 type: 'text',
                 text: JSON.stringify(
-                    results.map((r) => ({ id: r.content.id, title: r.title, excerpt: r.excerpt })),
+                    results.filter((r) => r.content).map((r) => ({ id: r.content.id, title: r.title, excerpt: r.excerpt })),
                     null,
                     2,
                 ),

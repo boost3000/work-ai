@@ -2,7 +2,8 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { loadGitLabConfig, loadJiraConfig, loadMariaDbConfig, loadSlackConfig } from '../config.ts';
+import { loadElasticsearchConfig, loadGitLabConfig, loadJiraConfig, loadMariaDbConfig, loadSlackConfig } from '../config.ts';
+import { ElasticsearchClient } from '../elasticsearch/client.ts';
 import { GitLabClient } from '../gitlab/client.ts';
 import { JiraClient } from '../jira/client.ts';
 import { MariaDbClient } from '../mariadb/client.ts';
@@ -15,6 +16,7 @@ const slack = new SlackClient(loadSlackConfig());
 const confluence = new ConfluenceClient(jiraConfig);
 const gitlab = new GitLabClient(loadGitLabConfig());
 const mariadb = new MariaDbClient(loadMariaDbConfig());
+const elasticsearch = new ElasticsearchClient(loadElasticsearchConfig());
 
 const server = new McpServer({ name: 'work-ai', version: '1.0.0' });
 
@@ -603,7 +605,7 @@ server.registerTool(
             content: [{
                 type: 'text',
                 text: JSON.stringify(
-                    results.filter((r) => r.content).map((r) => ({ id: r.content.id, title: r.title, excerpt: r.excerpt })),
+                    results.filter((r): r is typeof r & { content: NonNullable<typeof r.content> } => r.content != null).map((r) => ({ id: r.content.id, title: r.title, excerpt: r.excerpt })),
                     null,
                     2,
                 ),
@@ -1203,6 +1205,24 @@ server.registerTool(
     async ({ sql }) => {
         const rows = await mariadb.query(sql);
         return { content: [{ type: 'text', text: JSON.stringify(rows, null, 2) }] };
+    },
+);
+
+// Elasticsearch
+server.registerTool(
+    'elasticsearch_search_gameserver_logs',
+    {
+        description: 'Search gameserver logs in Elasticsearch. Returns up to 1000 log entries sorted by timestamp descending. Defaults to the last 24 hours if no date range is provided.',
+        inputSchema: {
+            gid: z.number().describe('Gameserver ID'),
+            search: z.string().optional().describe('Optional search string (wildcard match against message fields)'),
+            from: z.string().optional().describe('Start date in YYYY-MM-DD format. Defaults to 24h ago if omitted.'),
+            to: z.string().optional().describe('End date in YYYY-MM-DD format. Only used when from is set.'),
+        },
+    },
+    async ({ gid, search, from, to }) => {
+        const logs = await elasticsearch.searchGameserverLogs(gid, { search, from, to });
+        return { content: [{ type: 'text', text: JSON.stringify(logs, null, 2) }] };
     },
 );
 

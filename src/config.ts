@@ -1,4 +1,5 @@
 import '@std/dotenv/load';
+import type { ElasticsearchConfig } from './elasticsearch/types.ts';
 import type { GitLabConfig } from './gitlab/types.ts';
 import type { JiraConfig } from './jira/types.ts';
 import type { MariaDbConfig } from './mariadb/types.ts';
@@ -39,5 +40,12 @@ export function loadMariaDbConfig(): MariaDbConfig {
         username: requireEnv('DB_USERNAME'),
         password: requireEnv('DB_PASSWORD'),
         database: requireEnv('DB_DATABASE'),
+    };
+}
+
+export function loadElasticsearchConfig(): ElasticsearchConfig {
+    return {
+        apiUrl: requireEnv('ELASTICSEARCH_API_URL').replace(/\/+$/, ''),
+        apiKey: requireEnv('ELASTICSEARCH_API_KEY'),
     };
 }

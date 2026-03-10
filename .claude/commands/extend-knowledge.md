@@ -1,6 +1,6 @@
 # Extend your knowledge about the company and projects by fetching fresh data from all available sources
 
-First, check the `.knowledge/` folder for existing files and their freshness (look for a last-updated tracker or file timestamps). Skip sources that are still fresh — use 1-day TTL for activity data, 7-day TTL for stable data (people, projects, boards).
+First, check the `.knowledge/` folder for existing files and their freshness (look for a last-updated tracker or file timestamps). Skip sources that are still fresh — use 1-hour TTL for activity data, 1-day TTL for stable data (people, projects, boards).
 
 Run the following steps in parallel where possible (only for stale sources):
 

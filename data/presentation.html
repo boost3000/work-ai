@@ -967,7 +967,7 @@
     // ── PARTICLE CANVAS (single fixed layer) ──
     function initParticles() {
         const canvas = document.createElement('canvas');
-        canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.35;z-index:0;';
+        canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.55;z-index:0;';
         document.body.prepend(canvas);
         const ctx = canvas.getContext('2d');
         let W, H, particles = [];
@@ -979,7 +979,7 @@
         resize();
         window.addEventListener('resize', resize);
 
-        for (let i = 0; i < 110; i++) {
+        for (let i = 0; i < 180; i++) {
             particles.push({
                 x: Math.random() * W, y: Math.random() * H,
                 vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5,
@@ -1009,12 +1009,12 @@
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const d = Math.sqrt(dx * dx + dy * dy);
-                    if (d < 130) {
+                    if (d < 200) {
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(78,186,101,${.18 * (1 - d / 130)})`;
-                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = `rgba(78,186,101,${.22 * (1 - d / 200)})`;
+                        ctx.lineWidth = 1.5;
                         ctx.stroke();
                     }
                 }

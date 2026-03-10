@@ -62,8 +62,10 @@ export class ElasticsearchClient {
         }
 
         const data = await response.json();
+        // deno-lint-ignore no-explicit-any
         const hits = data.hits.hits.map((el: { _source?: any }) => el._source);
 
+        // deno-lint-ignore no-explicit-any
         return hits.map((hit: any) => ({
             timestamp: hit['@timestamp'],
             message: hit['message'],

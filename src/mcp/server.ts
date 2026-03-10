@@ -1214,16 +1214,17 @@ server.registerTool(
 server.registerTool(
     'elasticsearch_search_gameserver_logs',
     {
-        description: 'Search gameserver logs in Elasticsearch. Returns up to 1000 log entries sorted by timestamp descending. Defaults to the last 24 hours if no date range is provided.',
+        description: 'Search gameserver logs in Elasticsearch. Defaults to the last 24 hours if no date range is provided.',
         inputSchema: {
             gid: z.number().describe('Gameserver ID'),
             search: z.string().optional().describe('Optional search string (wildcard match against message fields)'),
             from: z.string().optional().describe('Start date in YYYY-MM-DD format. Defaults to 24h ago if omitted.'),
             to: z.string().optional().describe('End date in YYYY-MM-DD format. Only used when from is set.'),
+            size: z.number().optional().describe('Max number of log entries to return (default 1000).'),
         },
     },
-    async ({ gid, search, from, to }) => {
-        const logs = await elasticsearch.searchGameserverLogs(gid, { search, from, to });
+    async ({ gid, search, from, to, size }) => {
+        const logs = await elasticsearch.searchGameserverLogs(gid, { search, from, to, size });
         return { content: [{ type: 'text', text: JSON.stringify(logs, null, 2) }] };
     },
 );

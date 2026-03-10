@@ -11,7 +11,7 @@ export class ElasticsearchClient {
 
     async searchGameserverLogs(
         gid: number,
-        params: { search?: string; from?: string; to?: string },
+        params: { search?: string; from?: string; to?: string; size?: number },
     ): Promise<GameserverLog[]> {
         // deno-lint-ignore no-explicit-any
         const filter: any[] = [
@@ -45,7 +45,7 @@ export class ElasticsearchClient {
                 { '@timestamp': { order: 'desc' } },
                 { 'log.offset': { order: 'desc' } },
             ],
-            size: 1000,
+            size: params.size ?? 1000,
         };
 
         const response = await fetch(`${this.apiUrl}/_search`, {

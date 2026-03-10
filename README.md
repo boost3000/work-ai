@@ -1,6 +1,6 @@
 # work-ai
 
-A personal work automation layer for Claude Code. Exposes Jira, Slack, Confluence, GitLab, and MariaDB as MCP tools so Claude can act as an autonomous work assistant — triaging tickets, communicating with colleagues, reviewing code, and querying infrastructure data.
+A personal work automation layer for Claude Code. Exposes Jira, Slack, Confluence, GitLab, MariaDB, Elasticsearch, and Loki as MCP tools so Claude can act as an autonomous work assistant — triaging tickets, communicating with colleagues, reviewing code, querying infrastructure data, and investigating logs.
 
 ## What it does
 
@@ -9,12 +9,14 @@ A personal work automation layer for Claude Code. Exposes Jira, Slack, Confluenc
 - **Confluence** — search spaces and pages, read and write documentation
 - **GitLab** — manage branches, commits, merge requests, pipelines, and job logs
 - **MariaDB** — run read-only queries (SELECT/SHOW/DESCRIBE/EXPLAIN) against the production DB via tunnel
+- **Elasticsearch** — full-text search across gameserver logs; filter by time range, severity, and service
+- **Loki** — query Fleet container logs via LogQL (via Grafana); filter by app, container, host, and environment
 
 ## Requirements
 
 - [Deno](https://deno.land/) 2.x
 - Claude Code CLI
-- Credentials for Jira/Confluence (Atlassian Cloud), Slack (User Token), GitLab (Private Token), and MariaDB
+- Credentials for Jira/Confluence (Atlassian Cloud), Slack (User Token), GitLab (Private Token), MariaDB, Elasticsearch, and Grafana (for Loki)
 
 ## Setup
 
@@ -52,6 +54,13 @@ DB_HOSTNAME=your-db-host
 DB_USERNAME=your-db-user
 DB_PASSWORD=your-db-password
 DB_DATABASE=your-database
+
+ELASTICSEARCH_API_URL=https://your-elk-host/_search-or-index
+ELASTICSEARCH_API_KEY=your-api-key
+
+FLEET_GRAFANA_URL=https://your-grafana-host
+FLEET_GRAFANA_USERNAME=your-username
+FLEET_GRAFANA_PASSWORD=your-password
 ```
 
 **Required API permissions:**
@@ -59,6 +68,8 @@ DB_DATABASE=your-database
 - Slack: `channels:read`, `chat:write`, `users:read`, `search:read`, `files:read`, `reactions:write`
 - GitLab: `read_api`, `write_repository`, `read_registry`
 - MariaDB: read-only SELECT access (enforced in code)
+- Elasticsearch: API key with read access to the target index
+- Grafana/Loki: username + password with Explore/query permissions
 
 **2. Add permissions for Claude Code**
 
@@ -96,6 +107,12 @@ src/
     smoke.ts
   mariadb/
     client.ts            # MariaDbClient — mysql2/promise, read-only
+    types.ts
+  elasticsearch/
+    client.ts            # ElasticsearchClient — REST API with API key auth
+    types.ts
+  loki/
+    client.ts            # LokiClient — Grafana Loki HTTP API (LogQL)
     types.ts
   mcp/
     server.ts            # MCP stdio server — registers all tools

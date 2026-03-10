@@ -2,6 +2,7 @@ import '@std/dotenv/load';
 import type { ElasticsearchConfig } from './elasticsearch/types.ts';
 import type { GitLabConfig } from './gitlab/types.ts';
 import type { JiraConfig } from './jira/types.ts';
+import type { LokiConfig } from './loki/types.ts';
 import type { MariaDbConfig } from './mariadb/types.ts';
 import type { SlackConfig } from './slack/types.ts';
 
@@ -47,5 +48,14 @@ export function loadElasticsearchConfig(): ElasticsearchConfig {
     return {
         apiUrl: requireEnv('ELASTICSEARCH_API_URL').replace(/\/+$/, ''),
         apiKey: requireEnv('ELASTICSEARCH_API_KEY'),
+    };
+}
+
+export function loadLokiConfig(): LokiConfig {
+    return {
+        baseUrl: requireEnv('FLEET_GRAFANA_URL').replace(/\/+$/, ''),
+        username: requireEnv('FLEET_GRAFANA_USERNAME'),
+        password: requireEnv('FLEET_GRAFANA_PASSWORD'),
+        datasourceUid: 'de5wbhqm9pa0we',
     };
 }

@@ -5,6 +5,7 @@
 - Automate work. Handle tickets from Jira, communicate with work colleagues via. Slack.
 - Write and edit code and interact with gitlab.
 - Read confluence to get additional info about the company, their projects, policies and workflows.
+- Read the database, elasticsearch gameserver logs and loki odin fleet logs to gather more information.
 - Handle emails on <https://outlook.office.com/>. (not possible at the moment, as i don't have permissions right now)
 
 ## Fresh Setup Detection

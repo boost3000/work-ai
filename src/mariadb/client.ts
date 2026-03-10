@@ -10,16 +10,8 @@ export class MariaDbClient {
             user: config.username,
             password: config.password,
             database: config.database,
-            waitForConnections: true,
-            connectionLimit: 5,
-            maxIdle: 5,
-            idleTimeout: 60000,
-            queueLimit: 1,
-            enableKeepAlive: true,
-            keepAliveInitialDelay: 0,
             dateStrings: true,
             decimalNumbers: true,
-            connectTimeout: 10000,
         });
     }
 

@@ -10,5 +10,6 @@ Run the following steps in parallel where possible (only for stale sources):
 4. **GitLab** — If stale: list projects. Always check open MRs and pipeline status on active branches.
 5. **Confluence** — Search pages modified in the last 14 days: `lastModified > now("-14d") order by lastModified desc`.
 6. **People** — Refresh people data using `slack_list_users` and `jira_search_users` only if stale (>7 days).
+7. **Bigger Picture** — Roam Jira, Slack, Gitlab, Confluence and MariaDB for things you deem relevant, you always try to find something new.
 
-**Save** — Update `.knowledge/` files as needed. Replace outdated entries, never append duplicates. Always update the freshness tracker for every source that was refreshed. Be thorough but concise.
+**Save** — Update `.knowledge/` files as needed. Replace outdated entries, never append duplicates. Always update the freshness tracker for every source that was refreshed. Be thorough but concise. Give the user a summary of the things you found and saved.

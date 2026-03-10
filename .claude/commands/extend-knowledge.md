@@ -1,12 +1,14 @@
 # Extend your knowledge about the company and projects by fetching fresh data from all available sources
 
-Run the following steps in parallel where possible:
+First, check the `.knowledge/` folder for existing files and their freshness (look for a last-updated tracker or file timestamps). Skip sources that are still fresh — use 1-day TTL for activity data, 7-day TTL for stable data (people, projects, boards).
 
-1. **Jira** — Fetch open issues assigned to me. Also fetch recently updated issues across all projects (last 14 days). Fetch current sprint via jira_get_boards → jira_get_sprints.
-2. **Slack** — Search recent messages (last 14 days) with `after:<14-days-ago>` via slack_search_messages. Also fetch recent messages from any open DM channels.
-3. **GitLab** — List MRs assigned to or created by me across all projects. Check pipeline status on active branches. Note any failed pipelines or open review requests.
-4. **Confluence** — Search for pages modified in the last 14 days using CQL: `lastModified > now("-14d") order by lastModified desc`.
-5. **People** — Refresh people.md using slack_list_users and jira_search_users if the file is older than 7 days.
-6. **Save** — Update .knowledge files: _ai_recent_activity.md, projects.md, company.md, people.md, slack_channels.md as needed. Replace outdated entries, never append duplicates.
+Run the following steps in parallel where possible (only for stale sources):
 
-Be thorough but concise. Prioritize information relevant to active work.
+1. **Jira (my issues)** — Fetch open issues assigned to me. Also fetch recently updated issues across all projects (last 14 days).
+2. **Jira (boards/sprint)** — If stale: fetch boards and active sprint for the NET board.
+3. **Slack** — Search recent messages (last 14 days) via `slack_search_messages`. Also fetch recent messages from key channels.
+4. **GitLab** — If stale: list projects. Always check open MRs and pipeline status on active branches.
+5. **Confluence** — Search pages modified in the last 14 days: `lastModified > now("-14d") order by lastModified desc`.
+6. **People** — Refresh people data using `slack_list_users` and `jira_search_users` only if stale (>7 days).
+
+**Save** — Update `.knowledge/` files as needed. Replace outdated entries, never append duplicates. Always update the freshness tracker for every source that was refreshed. Be thorough but concise.

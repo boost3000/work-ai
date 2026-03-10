@@ -1,9 +1,11 @@
-# Prepare a standup summary for me based on
+# Prepare a standup summary for me
 
-1. My Jira issues updated in the last 14 days
-2. Recent messages in #development, #projekt_4np and #team_4netplayers from the last 7 days
+**Step 1 — Load context:**
+- Check `.knowledge/` for cached Jira and Slack data and whether it's from today
+- If fresh, use it directly — skip API calls
+- If stale, fetch my Jira issues updated in the last 14 days + recent messages in #development, #projekt_4np, #team_4netplayers (last 7 days), then save to `.knowledge/`
 
-Format it as:
+**Step 2 — Format:**
 
 - **Last week**: what was done
 - **Next week**: what I plan to work on

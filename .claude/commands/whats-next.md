@@ -1,3 +1,11 @@
-# Look at my current Jira issues (assigned to me, unresolved) and recent Slack messages in #development, #projekt_4np and #team_4netplayers, then recommend what I should work on next
+# Look at my current Jira issues and recent Slack activity, then recommend what I should work on next
 
-- Consider urgency, dependencies, and what's being discussed by the team. Be direct and give a clear recommendation with brief reasoning.
+**Step 1 — Load context:**
+- Check `.knowledge/` for cached Jira and Slack data and whether it's from today
+- If fresh, use it directly — skip API calls
+- If stale, fetch open Jira issues assigned to me + recent messages in #development, #projekt_4np, #team_4netplayers (last 7 days), then save to `.knowledge/`
+
+**Step 2 — Recommend:**
+- Consider urgency, dependencies, and what the team is discussing
+- Give one clear recommendation with brief reasoning
+- List 2-3 alternatives if relevant

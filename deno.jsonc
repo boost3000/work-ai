@@ -1,8 +1,8 @@
 {
     "tasks": {
-        "jira": "deno run --allow-env --allow-read --allow-net src/jira/smoke.ts",
-        "slack": "deno run --allow-env --allow-read --allow-net src/slack/smoke.ts",
-        "confluence": "deno run --allow-env --allow-read --allow-net src/confluence/smoke.ts"
+        "jira": "deno run --allow-env --allow-read --allow-net src/tools/jira/smoke.ts",
+        "slack": "deno run --allow-env --allow-read --allow-net src/tools/slack/smoke.ts",
+        "confluence": "deno run --allow-env --allow-read --allow-net src/tools/confluence/smoke.ts"
     },
     "imports": {
         "@std/dotenv": "jsr:@std/dotenv@^0.225.3",

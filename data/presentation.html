@@ -352,17 +352,82 @@
         /* ── SLIDE 5: DEMO / WORKFLOW ── */
         .slide-demo { background: transparent; }
 
+        .workflows-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
         .workflow {
             display: flex;
             flex-direction: column;
-            gap: 0;
-            max-width: 720px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 18px;
+            padding: 24px 26px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(78,186,101,0.4), transparent);
+        }
+
+        .workflow::after {
+            content: '';
+            position: absolute;
+            top: -80px; left: -60px;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(78,186,101,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .workflow-scenario {
+            background: rgba(78,186,101,0.06);
+            border: 1px solid rgba(78,186,101,0.18);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .workflow-scenario-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+            opacity: .8;
+        }
+
+        .workflow-scenario em {
+            display: block;
+            font-style: normal;
+            color: #e2e2e2;
+            font-size: .82rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            line-height: 1.45;
+        }
+
+        .workflow-scenario em::before {
+            content: '› ';
+            color: var(--accent);
+            font-weight: 700;
         }
 
         .workflow-step {
             display: grid;
-            grid-template-columns: 40px 1fr;
-            gap: 20px;
+            grid-template-columns: 30px 1fr;
+            gap: 14px;
             position: relative;
         }
 
@@ -371,22 +436,23 @@
         .workflow-step::before {
             content: '';
             position: absolute;
-            left: 19px;
-            top: 48px;
-            bottom: -8px;
+            left: 14px;
+            top: 34px;
+            bottom: -6px;
             width: 2px;
-            background: var(--border);
+            background: linear-gradient(to bottom, rgba(78,186,101,0.35), rgba(78,186,101,0.04));
         }
 
         .workflow-step:last-child::before { display: none; }
 
         .workflow-num {
-            width: 40px; height: 40px;
+            width: 30px; height: 30px;
             border-radius: 50%;
-            background: var(--accent-dim);
-            border: 1px solid var(--accent-border);
+            background: linear-gradient(135deg, rgba(78,186,101,0.28), rgba(78,186,101,0.08));
+            border: 1px solid rgba(78,186,101,0.45);
+            box-shadow: 0 0 10px rgba(78,186,101,0.12);
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 800;
             color: var(--accent);
             flex-shrink: 0;
@@ -395,32 +461,33 @@
         }
 
         .workflow-body {
-            padding-bottom: 32px;
+            padding-bottom: 18px;
         }
 
         .workflow-title {
-            font-size: .95rem;
+            font-size: .82rem;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
+            color: #e8e8e8;
         }
 
         .workflow-desc {
-            font-size: 13px;
-            color: var(--muted2);
-            line-height: 1.65;
+            font-size: 11.5px;
+            color: #909090;
+            line-height: 1.55;
         }
 
         .workflow-tag {
             display: inline-block;
-            background: var(--accent-dim);
-            border: 1px solid var(--accent-border);
+            background: rgba(78,186,101,0.08);
+            border: 1px solid rgba(78,186,101,0.22);
             color: var(--accent);
-            font-size: 11px;
+            font-size: 9.5px;
             font-weight: 700;
-            letter-spacing: .06em;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 8px;
+            letter-spacing: .08em;
+            padding: 3px 9px;
+            border-radius: 100px;
+            margin-top: 5px;
             text-transform: uppercase;
         }
 
@@ -820,49 +887,106 @@
 
 <!-- SLIDE 5: WORKFLOW DEMO -->
 <section class="slide slide-demo" data-slide="5">
-    <div class="slide-label">Example Workflow</div>
-    <h2 class="slide-title fade-in">"Pick up NET-5451 and open an MR."</h2>
-    <div class="workflow stagger">
-        <div class="workflow-step">
-            <div class="workflow-num">1</div>
-            <div class="workflow-body">
-                <div class="workflow-title">Fetch the ticket</div>
-                <div class="workflow-desc">Reads the Jira ticket: description, acceptance criteria, current status, linked issues. No copy-pasting.</div>
-                <div class="workflow-tag">Jira</div>
+    <div class="slide-label">Example Workflows</div>
+    <h2 class="slide-title fade-in">Two prompts. Full context. Zero tab-switching.</h2>
+    <div class="workflows-grid stagger">
+
+        <!-- WORKFLOW 1: ticket → MR -->
+        <div class="workflow">
+            <div class="workflow-scenario">
+                <div class="workflow-scenario-label">Workflow 01 — Dev</div>
+                <em>"Pick up NET-5451 and open an MR."</em>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">1</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Fetch the ticket</div>
+                    <div class="workflow-desc">Reads description, acceptance criteria, status and linked issues. No copy-pasting.</div>
+                    <div class="workflow-tag">Jira</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">2</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Check related context</div>
+                    <div class="workflow-desc">Searches Slack for recent discussion. Checks Confluence for architecture docs.</div>
+                    <div class="workflow-tag">Slack · Confluence</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">3</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Create branch + implement</div>
+                    <div class="workflow-desc">Creates a GitLab branch named after the ticket ID, reads existing code, writes the fix.</div>
+                    <div class="workflow-tag">GitLab</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">4</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Open MR + move ticket</div>
+                    <div class="workflow-desc">Creates a merge request with a proper description. Transitions Jira to "Feedback" automatically.</div>
+                    <div class="workflow-tag">GitLab · Jira</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">5</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Monitor CI</div>
+                    <div class="workflow-desc">Watches the pipeline, fetches job logs on failure, suggests fixes.</div>
+                    <div class="workflow-tag">GitLab CI</div>
+                </div>
             </div>
         </div>
-        <div class="workflow-step">
-            <div class="workflow-num">2</div>
-            <div class="workflow-body">
-                <div class="workflow-title">Check related context</div>
-                <div class="workflow-desc">Searches Slack for any recent discussion about this feature. Checks Confluence for relevant architecture docs.</div>
-                <div class="workflow-tag">Slack · Confluence</div>
+
+        <!-- WORKFLOW 2: incident investigation -->
+        <div class="workflow">
+            <div class="workflow-scenario">
+                <div class="workflow-scenario-label">Workflow 02 — Ops</div>
+                <em>"Why is gameserver #42 crashing since 14:00?"</em>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">1</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Search gameserver logs</div>
+                    <div class="workflow-desc">Queries Elasticsearch for errors and stack traces around the crash window. Spots the pattern immediately.</div>
+                    <div class="workflow-tag">Elasticsearch</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">2</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Check container logs</div>
+                    <div class="workflow-desc">Pulls Loki logs from the affected fleet pod to correlate OOM kills, restarts and sidecar errors.</div>
+                    <div class="workflow-tag">Loki</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">3</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Query affected sessions</div>
+                    <div class="workflow-desc">Runs a read-only DB query to find impacted players, match counts and session durations in the crash window.</div>
+                    <div class="workflow-tag">MariaDB</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">4</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Look up runbook + notify</div>
+                    <div class="workflow-desc">Finds the incident runbook in Confluence. Posts a summary with root cause and affected scope to the ops channel.</div>
+                    <div class="workflow-tag">Confluence · Slack</div>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-num">5</div>
+                <div class="workflow-body">
+                    <div class="workflow-title">Open monitoring dashboard</div>
+                    <div class="workflow-desc">Launches the browser, navigates to Grafana, takes a screenshot of the spike for the incident report.</div>
+                    <div class="workflow-tag">Playwright</div>
+                </div>
             </div>
         </div>
-        <div class="workflow-step">
-            <div class="workflow-num">3</div>
-            <div class="workflow-body">
-                <div class="workflow-title">Create branch + implement</div>
-                <div class="workflow-desc">Creates a GitLab branch named after the ticket ID (e.g. NET-5451), reads existing code, writes the fix.</div>
-                <div class="workflow-tag">GitLab</div>
-            </div>
-        </div>
-        <div class="workflow-step">
-            <div class="workflow-num">4</div>
-            <div class="workflow-body">
-                <div class="workflow-title">Open MR + move ticket</div>
-                <div class="workflow-desc">Creates a merge request with a proper description. Transitions the Jira ticket to "Feedback" automatically.</div>
-                <div class="workflow-tag">GitLab · Jira</div>
-            </div>
-        </div>
-        <div class="workflow-step">
-            <div class="workflow-num">5</div>
-            <div class="workflow-body">
-                <div class="workflow-title">Monitor CI</div>
-                <div class="workflow-desc">Watches the pipeline, fetches job logs if something fails, suggests fixes. No manual log digging.</div>
-                <div class="workflow-tag">GitLab CI</div>
-            </div>
-        </div>
+
     </div>
     <div class="slide-num">05 / 07</div>
 </section>

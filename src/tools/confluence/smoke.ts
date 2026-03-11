@@ -23,5 +23,5 @@ if (spaces.length > 0) {
 console.log('\nSearching for recent content...\n');
 const results = await confluence.search('type=page ORDER BY lastmodified DESC', 5);
 for (const r of results) {
-    console.log(`  ${r.content.title} — ${r.excerpt.slice(0, 80)}`);
+    console.log(`  ${r.content?.title} — ${r.excerpt.slice(0, 80)}`);
 }

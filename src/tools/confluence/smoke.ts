@@ -1,4 +1,4 @@
-import { loadJiraConfig } from '../config.ts';
+import { loadJiraConfig } from '../../config.ts';
 import { ConfluenceClient } from './client.ts';
 
 const config = loadJiraConfig();

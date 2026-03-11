@@ -1,4 +1,4 @@
-import { loadGitLabConfig } from '../config.ts';
+import { loadGitLabConfig } from '../../config.ts';
 import { GitLabClient } from './client.ts';
 
 const gitlab = new GitLabClient(loadGitLabConfig());

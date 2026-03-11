@@ -8,4 +8,5 @@ export interface GameserverLog {
     message: string;
     file: string;
     offset: number;
+    gid?: number;
 }

@@ -9,6 +9,71 @@ export class ElasticsearchClient {
         this.apiKey = config.apiKey;
     }
 
+    async searchLogs(
+        params: { search: string; from?: string; to?: string; size?: number },
+    ): Promise<GameserverLog[]> {
+        // deno-lint-ignore no-explicit-any
+        const filter: any[] = [
+            {
+                query_string: {
+                    query: `*${params.search}*`,
+                    fields: ['message', 'fields.message'],
+                },
+            },
+        ];
+
+        if (params.from) {
+            // deno-lint-ignore no-explicit-any
+            const range: any = { gte: `${params.from}T00:00:00Z` };
+            if (params.to) {
+                range['lte'] = `${params.to}T23:59:29Z`;
+            }
+            filter.push({ range: { '@timestamp': range } });
+        } else {
+            filter.push({ range: { '@timestamp': { gte: 'now-24h' } } });
+        }
+
+        const body = {
+            _source: ['@timestamp', 'log', 'message', 'fields.app'],
+            query: { bool: { filter } },
+            sort: [
+                { '@timestamp': { order: 'desc' } },
+                { 'log.offset': { order: 'desc' } },
+            ],
+            size: params.size ?? 1000,
+        };
+
+        const response = await fetch(`${this.apiUrl}/_search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `ApiKey ${this.apiKey}`,
+            },
+            body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Elasticsearch HTTP error ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        // deno-lint-ignore no-explicit-any
+        const hits = data.hits.hits.map((el: { _source?: any }) => el._source);
+
+        // deno-lint-ignore no-explicit-any
+        return hits.map((hit: any) => {
+            const app: string | undefined = hit['fields']?.['app'];
+            const gid = app?.startsWith('server_') ? parseInt(app.slice(7), 10) : undefined;
+            return {
+                timestamp: hit['@timestamp'],
+                message: hit['message'],
+                file: hit['log']['file']['path'].replaceAll('\\', '/'),
+                offset: hit['log']['offset'],
+                gid,
+            };
+        });
+    }
+
     async searchGameserverLogs(
         gid: number,
         params: { search?: string; from?: string; to?: string; size?: number },

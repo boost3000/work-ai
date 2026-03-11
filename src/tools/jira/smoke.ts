@@ -1,4 +1,4 @@
-import { loadJiraConfig } from '../config.ts';
+import { loadJiraConfig } from '../../config.ts';
 import { JiraClient } from './client.ts';
 
 const config = loadJiraConfig();

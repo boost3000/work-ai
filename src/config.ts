@@ -1,10 +1,10 @@
 import '@std/dotenv/load';
-import type { ElasticsearchConfig } from './elasticsearch/types.ts';
-import type { GitLabConfig } from './gitlab/types.ts';
-import type { JiraConfig } from './jira/types.ts';
-import type { LokiConfig } from './loki/types.ts';
-import type { MariaDbConfig } from './mariadb/types.ts';
-import type { SlackConfig } from './slack/types.ts';
+import type { ElasticsearchConfig } from './tools/elasticsearch/types.ts';
+import type { GitLabConfig } from './tools/gitlab/types.ts';
+import type { JiraConfig } from './tools/jira/types.ts';
+import type { LokiConfig } from './tools/loki/types.ts';
+import type { MariaDbConfig } from './tools/mariadb/types.ts';
+import type { SlackConfig } from './tools/slack/types.ts';
 
 function requireEnv(name: string): string {
     const value = Deno.env.get(name);

@@ -9,20 +9,20 @@
 
 - `src/mod.ts` — public re-exports
 - `src/config.ts` — loads `.env` via `@std/dotenv`, exports typed config loaders
-- `src/jira/client.ts` — `JiraClient` class wrapping Jira Cloud REST API v3 (basic auth)
-- `src/jira/types.ts` — TypeScript types for Jira API entities
-- `src/jira/smoke.ts` — quick smoke test script (`deno task jira`)
-- `src/slack/client.ts` — `SlackClient` class wrapping Slack Web API (Bearer token auth)
-- `src/slack/types.ts` — TypeScript types for Slack API entities
-- `src/slack/smoke.ts` — quick smoke test script (`deno task slack`)
-- `src/confluence/client.ts` — `ConfluenceClient` wrapping Confluence Cloud API v2 + v1 search (basic auth)
-- `src/confluence/types.ts` — TypeScript types for Confluence API entities
-- `src/confluence/smoke.ts` — quick smoke test script (`deno task confluence`)
-- `src/gitlab/client.ts` — `GitLabClient` class wrapping GitLab API v4 (Private-Token auth)
-- `src/gitlab/types.ts` — TypeScript types for GitLab API entities
-- `src/gitlab/smoke.ts` — quick smoke test script
-- `src/mariadb/client.ts` — `MariaDbClient` using `mysql2/promise` (read-only: SELECT/SHOW/DESCRIBE/EXPLAIN)
-- `src/mariadb/types.ts` — TypeScript types for MariaDB config
+- `src/tools/jira/client.ts` — `JiraClient` class wrapping Jira Cloud REST API v3 (basic auth)
+- `src/tools/jira/types.ts` — TypeScript types for Jira API entities
+- `src/tools/jira/smoke.ts` — quick smoke test script (`deno task jira`)
+- `src/tools/slack/client.ts` — `SlackClient` class wrapping Slack Web API (Bearer token auth)
+- `src/tools/slack/types.ts` — TypeScript types for Slack API entities
+- `src/tools/slack/smoke.ts` — quick smoke test script (`deno task slack`)
+- `src/tools/confluence/client.ts` — `ConfluenceClient` wrapping Confluence Cloud API v2 + v1 search (basic auth)
+- `src/tools/confluence/types.ts` — TypeScript types for Confluence API entities
+- `src/tools/confluence/smoke.ts` — quick smoke test script (`deno task confluence`)
+- `src/tools/gitlab/client.ts` — `GitLabClient` class wrapping GitLab API v4 (Private-Token auth)
+- `src/tools/gitlab/types.ts` — TypeScript types for GitLab API entities
+- `src/tools/gitlab/smoke.ts` — quick smoke test script
+- `src/tools/mariadb/client.ts` — `MariaDbClient` using `mysql2/promise` (read-only: SELECT/SHOW/DESCRIBE/EXPLAIN)
+- `src/tools/mariadb/types.ts` — TypeScript types for MariaDB config
 - `src/mcp/server.ts` — MCP stdio server exposing all clients as Claude Code tools
 - `.mcp.json` — project-scoped MCP config for Claude Code auto-discovery
 

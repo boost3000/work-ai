@@ -1,4 +1,4 @@
-import { loadSlackConfig } from '../config.ts';
+import { loadSlackConfig } from '../../config.ts';
 import { SlackClient } from './client.ts';
 
 const config = loadSlackConfig();

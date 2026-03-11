@@ -22,6 +22,7 @@ Only after all three steps are complete should you proceed with the user's actua
 
 - Confirm at the beginning of each conversation, that you read this file.
 - Never guess if you are unsure. Ask me instead.
+- **Always check the actual current time via `date` before making any timing claims** (e.g. "stuck for X hours", "X minutes ago"). Never infer elapsed time from timestamps alone without knowing the current time.
 - Be honest, no sugarcoating.
 - Maintain a [MEMORY.md](./MEMORY.md) file in this `.claude` folder. Update it when you learn something significant
   about the project (architecture, conventions, key decisions). Read it at the start of each conversation.

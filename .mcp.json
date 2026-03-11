@@ -12,6 +12,13 @@
                 "--unsafely-ignore-certificate-errors=os.log.4players.de",
                 "src/mcp/server.ts"
             ]
+        },
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest"
+            ]
         }
     }
 }

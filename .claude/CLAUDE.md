@@ -51,3 +51,5 @@ Only after all three steps are complete should you proceed with the user's actua
 
 - Whenever a new MCP tool is added to `src/mcp/server.ts`, also add it to the `permissions.allow` list in `.claude/settings.local.json` using the format `mcp__work-ai__<tool_name>`.
 - Keep `.claude/settings.local.json` in sync with all tools registered in `src/mcp/server.ts`.
+- The Playwright MCP server (`@playwright/mcp`) is configured in `.mcp.json`. All its tools must be listed in `permissions.allow` using the format `mcp__playwright__<tool_name>` and `"playwright"` must be in `enabledMcpjsonServers`. See the current list of tools in `.claude/settings.local.json`.
+- Playwright browsers must be installed once via `npx playwright install` before the MCP server can launch a browser. System dependencies also need to be installed via `sudo npx playwright install-deps`.

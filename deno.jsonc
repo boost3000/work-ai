@@ -2,7 +2,10 @@
     "tasks": {
         "jira": "deno run --allow-env --allow-read --allow-net src/tools/jira/smoke.ts",
         "slack": "deno run --allow-env --allow-read --allow-net src/tools/slack/smoke.ts",
-        "confluence": "deno run --allow-env --allow-read --allow-net src/tools/confluence/smoke.ts"
+        "confluence": "deno run --allow-env --allow-read --allow-net src/tools/confluence/smoke.ts",
+        "mariadb": "deno run --allow-env --allow-read --allow-net --allow-sys src/tools/mariadb/smoke.ts",
+        "elasticsearch": "deno run --allow-env --allow-read --allow-net src/tools/elasticsearch/smoke.ts",
+        "loki": "deno run --allow-env --allow-read --allow-net src/tools/loki/smoke.ts"
     },
     "imports": {
         "@std/dotenv": "jsr:@std/dotenv@^0.225.3",

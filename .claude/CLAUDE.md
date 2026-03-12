@@ -58,6 +58,13 @@ Only after all three steps are complete should you proceed with the user's actua
 - Read the `./src` folder and use mcp implementation provided in this project to execute commands when needed. If it's
   not possible, avoid writing helper scripts.
 
+## Working with GitLab Repositories
+
+- When inspecting a GitLab repo, always check for a `.claude/` folder and read any `CLAUDE.md` file inside it.
+- Respect the instructions found in those files — they may define conventions, workflows, or constraints specific to
+  that project.
+- Treat project-level `CLAUDE.md` files with the same authority as this file for the scope of work in that repo.
+
 ## Settings & Permissions
 
 - Whenever a new MCP tool is added to `src/mcp/server.ts`, also add it to the `permissions.allow` list in

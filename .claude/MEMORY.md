@@ -37,3 +37,7 @@
 - No third-party SDKs — plain fetch with typed wrappers (except mysql2 for MariaDB)
 - Jira search uses new `POST /search/jql` endpoint (old `/search` was removed)
 - Confluence uses v2 API for spaces/pages, v1 for CQL search
+
+## Workflow Rules
+
+- When transitioning a Jira ticket to **Feedback**, also reassign it to the **reporter** (not the User) so it lands in their queue.

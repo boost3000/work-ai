@@ -14,7 +14,8 @@ At the start of each conversation, check if this is a freshly pulled repo by ver
 is empty or missing. If it is, treat this as a first-time setup and guide the user through the following steps **in
 order** before doing anything else:
 
-0. **Check Deno** — Verify Deno is installed (`deno --version`). If not, instruct the user to install it from [deno.com](https://deno.com) before proceeding.
+0. **Check Deno** — Verify Deno is installed (`deno --version`). If not, instruct the user to install it from
+   [deno.com](https://deno.com) before proceeding.
 1. **Credentials setup** — Run the `/setup-env` skill to guide the user through filling in all required credentials.
 2. **Settings & Permissions** — Walk through the `Settings & Permissions` section of this file. Verify that
    `.claude/settings.local.json` exists and that all tools in `src/mcp/server.ts` are listed in `permissions.allow`. Fix
@@ -31,8 +32,9 @@ Only after all three steps are complete should you proceed with the user's actua
 - **Always check the actual current time via `date` before making any timing claims** (e.g. "stuck for X hours", "X
   minutes ago"). Never infer elapsed time from timestamps alone without knowing the current time.
 - Be honest, no sugarcoating.
-- Maintain a [MEMORY.md](./MEMORY.md) file in this `.claude` folder. Update it when you learn something significant
-  about the project (architecture, conventions, key decisions). Read it at the start of each conversation.
+- Maintain a [MEMORY.md](./MEMORY.md) file in this `.claude` folder instead of using the folder `~/.claude`. Update it
+  when you learn something significant about the project (architecture, conventions, key decisions). Read it at the
+  start of each conversation.
 
 ## Work Behaviour
 

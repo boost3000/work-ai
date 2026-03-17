@@ -62,7 +62,7 @@ Only after all three steps are complete should you proceed with the user's actua
 
 ## Working with GitLab Repositories
 
-- When inspecting a GitLab repo, always check for a `.claude/` folder and read any `CLAUDE.md` file inside it.
+- When inspecting a GitLab repo, always check for a `.claude/` folder and read any `CLAUDE.md` file inside it or in the project root.
 - Respect the instructions found in those files — they may define conventions, workflows, or constraints specific to
   that project.
 - Treat project-level `CLAUDE.md` files with the same authority as this file for the scope of work in that repo.
@@ -80,5 +80,5 @@ Only after all three steps are complete should you proceed with the user's actua
 
 ## Interaction with Database
 
-- Don't guess table names but retreive a list if you are unsure. Same with columns names, get tables structure first and
+- Don't guess table names but retreive a list if you are unsure. Same with columns names and types, get the table structure first and
   don't guess.

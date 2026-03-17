@@ -4,31 +4,62 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Company Brain · 4Players</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0d0d0d;
-            --surface: rgba(20,20,20,0.85);
-            --surface2: rgba(28,28,28,0.85);
-            --border: #252525;
+            --bg: #060608;
+            --surface: rgba(16,16,20,0.75);
+            --surface2: rgba(22,22,28,0.8);
+            --border: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.12);
             --accent: #4eba65;
-            --accent-dim: rgba(78,186,101,.15);
-            --accent-border: rgba(78,186,101,.3);
-            --text: #e8e8e8;
-            --muted: #5a5a5a;
-            --muted2: #888;
-            --red: #181817; /* 4Players brand dark */
-            --warn: #e0a045;
-            --info: #4a9edd;
+            --accent2: #7de899;
+            --accent-dim: rgba(78,186,101,.1);
+            --accent-border: rgba(78,186,101,.2);
+            --text: #eaeaea;
+            --muted: #4a4a55;
+            --muted2: #8a8a9a;
+            --warn: #f0b050;
+            --info: #5aafee;
+            --glass: rgba(255,255,255,0.03);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
+        }
+
+        /* ── NOISE OVERLAY ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* ── DOT GRID ── */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* ── SLIDE LAYOUT ── */
@@ -40,25 +71,24 @@
             align-items: center;
             padding: 80px clamp(24px, 8vw, 120px);
             position: relative;
-            background: transparent;
+            z-index: 1;
         }
 
         /* ── SLIDE 1: HERO ── */
-        .slide-hero {
-            background: transparent;
-        }
-
-
         .eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             color: var(--accent);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: .12em;
-            margin-bottom: 28px;
+            letter-spacing: .16em;
+            margin-bottom: 32px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            padding: 8px 20px;
+            border-radius: 100px;
         }
 
         .eyebrow-dot {
@@ -66,61 +96,77 @@
             border-radius: 50%;
             background: var(--accent);
             animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--accent);
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .3; }
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
+            50% { opacity: .3; box-shadow: 0 0 2px var(--accent); }
         }
 
         .hero-headline {
-            font-size: clamp(3rem, 8vw, 6.5rem);
+            font-size: clamp(3.2rem, 8vw, 7rem);
             font-weight: 900;
-            letter-spacing: -.04em;
-            line-height: 1;
+            letter-spacing: -.05em;
+            line-height: .95;
             max-width: 900px;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
             text-align: center;
         }
 
         .hero-headline .green {
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, #b8f0c8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .hero-sub {
-            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-size: clamp(1rem, 2vw, 1.2rem);
             color: var(--muted2);
             max-width: 560px;
-            margin-bottom: 60px;
-            line-height: 1.7;
+            margin-bottom: 64px;
+            line-height: 1.8;
             text-align: center;
+            font-weight: 400;
         }
 
         .hero-meta {
             display: flex;
             align-items: center;
-            gap: 32px;
-            flex-wrap: wrap;
+            gap: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .hero-meta-item {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            padding: 16px 28px;
         }
 
         .hero-meta-val {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             line-height: 1;
         }
 
         .hero-meta-label {
-            font-size: 12px;
+            font-size: 10px;
             color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: .08em;
-            margin-top: 3px;
+            letter-spacing: .1em;
+            margin-top: 4px;
+            font-weight: 600;
         }
 
         .hero-divider {
@@ -129,28 +175,56 @@
             background: var(--border);
         }
 
-        /* ── SLIDE 2: PROBLEM ── */
-        .slide-problem { background: transparent; }
-
+        /* ── SHARED SLIDE STYLES ── */
         .slide-label {
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: .14em;
-            color: var(--muted);
+            letter-spacing: .16em;
+            color: var(--accent);
             font-weight: 700;
             margin-bottom: 16px;
             text-align: center;
+            position: relative;
+            display: inline-block;
+        }
+
+        .slide-label::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: .5;
         }
 
         .slide-title {
             font-size: clamp(1.8rem, 4vw, 3rem);
             font-weight: 800;
             letter-spacing: -.03em;
-            margin-bottom: 48px;
+            margin-bottom: 52px;
             max-width: 700px;
             text-align: center;
+            line-height: 1.15;
         }
 
+        /* ── GLASS CARD BASE ── */
+        .glass-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: border-color .3s, transform .25s cubic-bezier(.16,1,.3,1), box-shadow .3s;
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 40px rgba(0,0,0,.3), 0 0 0 1px rgba(78,186,101,.08);
+        }
+
+        /* ── SLIDE 2: PROBLEM ── */
         .problem-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -159,21 +233,36 @@
         }
 
         .problem-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 28px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
         }
 
         .problem-icon {
-            font-size: 1.8rem;
-            margin-bottom: 14px;
+            font-size: 1.6rem;
+            margin-bottom: 16px;
+            width: 48px; height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
         }
 
         .problem-title {
-            font-size: .95rem;
+            font-size: .9rem;
             font-weight: 700;
             margin-bottom: 8px;
+            letter-spacing: -.01em;
         }
 
         .problem-desc {
@@ -183,40 +272,43 @@
         }
 
         /* ── SLIDE 3: SOLUTION ── */
-        .slide-solution { background: transparent; }
-
         .architecture {
             position: relative;
-            width: 520px;
-            height: 520px;
+            width: 400px;
+            height: 400px;
             flex-shrink: 0;
         }
 
-        /* orbit ring */
         .architecture::before {
             content: '';
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 420px; height: 420px;
+            width: 330px; height: 330px;
             border-radius: 50%;
-            background: var(--surface);
+            background: transparent;
             border: 1px solid var(--border);
         }
 
-        @keyframes orbitSpin {
-            from { transform: translate(-50%,-50%) rotate(0deg); }
-            to   { transform: translate(-50%,-50%) rotate(360deg); }
+        /* second orbit ring, dashed */
+        .architecture::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px; height: 240px;
+            border-radius: 50%;
+            border: 1px dashed rgba(78,186,101,.1);
         }
 
         .arch-center {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 140px; height: 140px;
+            width: 100px; height: 100px;
             border-radius: 50%;
-            background: var(--surface);
-            border: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(78,186,101,.12), rgba(78,186,101,.03));
+            border: 1px solid var(--accent-border);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -225,8 +317,8 @@
             z-index: 2;
         }
 
-        .arch-center-icon { font-size: 2rem; margin-bottom: 6px; }
-        .arch-center-label { font-size: .7rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; }
+        .arch-center-icon { font-size: 1.6rem; margin-bottom: 3px; }
+        .arch-center-label { font-size: .6rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .12em; }
 
         .arch-spoke {
             position: absolute;
@@ -236,29 +328,32 @@
         }
 
         .arch-spoke-icon {
-            width: 52px; height: 52px;
-            border-radius: 50%;
+            width: 40px; height: 40px;
+            border-radius: 11px;
             background: var(--surface2);
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
-            transition: border-color .2s, box-shadow .2s;
+            font-size: 1.3rem;
+            transition: border-color .3s, box-shadow .3s, transform .3s;
             cursor: default;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .arch-spoke:hover .arch-spoke-icon {
             border-color: var(--accent);
-            box-shadow: 0 0 16px rgba(78,186,101,.2);
+            box-shadow: 0 0 24px rgba(78,186,101,.2), 0 0 60px rgba(78,186,101,.06);
+            transform: scale(1.1);
         }
 
         .arch-spoke-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--muted2);
             text-transform: uppercase;
-            letter-spacing: .07em;
+            letter-spacing: .08em;
             white-space: nowrap;
         }
 
@@ -269,8 +364,6 @@
         }
 
         /* ── SLIDE 4: CAPABILITIES ── */
-        .slide-capabilities { background: transparent; }
-
         .capabilities-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -279,38 +372,28 @@
         }
 
         .cap-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
             padding: 26px;
             position: relative;
             overflow: hidden;
-            transition: border-color .2s, transform .15s;
-            cursor: default;
-        }
-
-        .cap-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
         }
 
         .cap-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent), transparent);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
             opacity: 0;
-            transition: opacity .2s;
+            transition: opacity .3s;
         }
 
-        .cap-card:hover::before { opacity: 1; }
+        .cap-card:hover::before { opacity: .6; }
 
         .cap-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .cap-icon {
@@ -323,52 +406,59 @@
             flex-shrink: 0;
         }
 
-        .cap-title { font-size: .95rem; font-weight: 700; }
+        .cap-title { font-size: .9rem; font-weight: 700; letter-spacing: -.01em; }
 
         .cap-items {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 7px;
         }
 
         .cap-items li {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--muted2);
-            padding-left: 14px;
+            padding-left: 16px;
             position: relative;
-            line-height: 1.5;
+            line-height: 1.55;
         }
 
         .cap-items li::before {
-            content: '→';
+            content: '';
             position: absolute;
             left: 0;
-            color: var(--accent);
-            font-size: 11px;
-            top: 2px;
+            top: 7px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: .6;
         }
 
         /* ── SLIDE 5: DEMO / WORKFLOW ── */
-        .slide-demo { background: transparent; }
-
         .workflows-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 28px;
+            gap: 18px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 980px;
+        }
+
+        @media (max-width: 800px) {
+            .workflows-grid { grid-template-columns: 1fr; }
         }
 
         .workflow {
             display: flex;
             flex-direction: column;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.07);
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 24px 26px;
+            padding: 18px 20px;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .workflow::before {
@@ -376,58 +466,65 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(78,186,101,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(78,186,101,0.35), transparent);
         }
 
         .workflow::after {
             content: '';
             position: absolute;
             top: -80px; left: -60px;
-            width: 200px; height: 200px;
+            width: 180px; height: 180px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(78,186,101,0.07) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(78,186,101,0.04) 0%, transparent 70%);
             pointer-events: none;
         }
 
         .workflow-scenario {
-            background: rgba(78,186,101,0.06);
-            border: 1px solid rgba(78,186,101,0.18);
+            background: rgba(78,186,101,0.05);
+            border: 1px solid rgba(78,186,101,0.15);
             border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 22px;
+            padding: 9px 12px;
+            margin-bottom: 14px;
             position: relative;
         }
 
         .workflow-scenario-label {
             font-size: 9px;
             font-weight: 700;
-            letter-spacing: .14em;
+            letter-spacing: .16em;
             text-transform: uppercase;
             color: var(--accent);
-            margin-bottom: 6px;
-            opacity: .8;
+            margin-bottom: 4px;
+            opacity: .7;
         }
 
         .workflow-scenario em {
             display: block;
             font-style: normal;
             color: #e2e2e2;
-            font-size: .82rem;
+            font-size: .78rem;
             font-weight: 500;
-            letter-spacing: 0;
-            line-height: 1.45;
+            line-height: 1.4;
         }
 
         .workflow-scenario em::before {
-            content: '› ';
+            content: '"';
             color: var(--accent);
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 1.1em;
+        }
+
+        .workflow-scenario em::after {
+            content: '"';
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.1em;
         }
 
         .workflow-step {
             display: grid;
-            grid-template-columns: 30px 1fr;
-            gap: 14px;
+            grid-template-columns: 24px 1fr;
+            gap: 10px;
             position: relative;
         }
 
@@ -436,23 +533,22 @@
         .workflow-step::before {
             content: '';
             position: absolute;
-            left: 14px;
-            top: 34px;
-            bottom: -6px;
-            width: 2px;
-            background: linear-gradient(to bottom, rgba(78,186,101,0.35), rgba(78,186,101,0.04));
+            left: 11px;
+            top: 26px;
+            bottom: -4px;
+            width: 1px;
+            background: linear-gradient(to bottom, rgba(78,186,101,0.2), rgba(78,186,101,0.01));
         }
 
         .workflow-step:last-child::before { display: none; }
 
         .workflow-num {
-            width: 30px; height: 30px;
+            width: 24px; height: 24px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(78,186,101,0.28), rgba(78,186,101,0.08));
-            border: 1px solid rgba(78,186,101,0.45);
-            box-shadow: 0 0 10px rgba(78,186,101,0.12);
+            background: rgba(78,186,101,0.1);
+            border: 1px solid rgba(78,186,101,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 800;
             color: var(--accent);
             flex-shrink: 0;
@@ -460,65 +556,70 @@
             z-index: 1;
         }
 
-        .workflow-body {
-            padding-bottom: 18px;
-        }
+        .workflow-body { padding-bottom: 12px; }
 
         .workflow-title {
-            font-size: .82rem;
+            font-size: .75rem;
             font-weight: 700;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             color: #e8e8e8;
+            letter-spacing: -.01em;
         }
 
         .workflow-desc {
-            font-size: 11.5px;
-            color: #909090;
-            line-height: 1.55;
+            font-size: 10.5px;
+            color: #707080;
+            line-height: 1.5;
         }
 
         .workflow-tag {
             display: inline-block;
-            background: rgba(78,186,101,0.08);
-            border: 1px solid rgba(78,186,101,0.22);
+            background: rgba(78,186,101,0.06);
+            border: 1px solid rgba(78,186,101,0.18);
             color: var(--accent);
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 700;
             letter-spacing: .08em;
-            padding: 3px 9px;
+            padding: 3px 10px;
             border-radius: 100px;
-            margin-top: 5px;
+            margin-top: 6px;
             text-transform: uppercase;
         }
 
         /* ── SLIDE 6: ROADMAP ── */
-        .slide-roadmap { background: transparent; }
-
         .roadmap-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            max-width: 900px;
+            gap: 20px;
+            max-width: 920px;
         }
 
         @media (max-width: 700px) {
             .roadmap-grid { grid-template-columns: 1fr; }
         }
 
+        .roadmap-col {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
 
         .roadmap-phase {
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .12em;
-            margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--border);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .roadmap-phase.done { color: var(--accent); border-color: var(--accent); }
-        .roadmap-phase.next { color: var(--warn); border-color: var(--warn); }
-        .roadmap-phase.future { color: var(--info); border-color: var(--info); }
+        .roadmap-phase.done { color: var(--accent); border-color: rgba(78,186,101,.25); }
+        .roadmap-phase.next { color: var(--warn); border-color: rgba(240,176,80,.25); }
+        .roadmap-phase.future { color: var(--info); border-color: rgba(90,175,238,.25); }
 
         .roadmap-items {
             display: flex;
@@ -527,37 +628,27 @@
         }
 
         .roadmap-item {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--muted2);
             display: flex;
             align-items: flex-start;
-            gap: 8px;
+            gap: 10px;
             line-height: 1.5;
         }
 
         .roadmap-item-dot {
-            width: 6px; height: 6px;
+            width: 5px; height: 5px;
             border-radius: 50%;
             flex-shrink: 0;
             margin-top: 5px;
         }
 
-        .done .roadmap-item-dot { background: var(--accent); }
-        .next .roadmap-item-dot { background: var(--warn); }
-        .future .roadmap-item-dot { background: var(--info); }
-
-        .roadmap-col .roadmap-items .roadmap-item .roadmap-item-dot {
-            background: inherit;
-        }
-
-        /* Fix dot colors per column */
-        .col-done .roadmap-item-dot { background: var(--accent); }
-        .col-next .roadmap-item-dot { background: var(--warn); }
-        .col-future .roadmap-item-dot { background: var(--info); }
+        .col-done .roadmap-item-dot { background: var(--accent); box-shadow: 0 0 6px rgba(78,186,101,.4); }
+        .col-next .roadmap-item-dot { background: var(--warn); box-shadow: 0 0 6px rgba(240,176,80,.4); }
+        .col-future .roadmap-item-dot { background: var(--info); box-shadow: 0 0 6px rgba(90,175,238,.4); }
 
         /* ── SLIDE 7: CTA ── */
         .slide-cta {
-            background: transparent;
             align-items: center;
             text-align: center;
         }
@@ -566,16 +657,17 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(78,186,101,.06) 0%, transparent 70%);
+            background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(78,186,101,.05) 0%, transparent 70%);
             pointer-events: none;
         }
 
         .cta-headline {
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-size: clamp(2rem, 5vw, 3.8rem);
             font-weight: 900;
-            letter-spacing: -.03em;
+            letter-spacing: -.04em;
             max-width: 700px;
             margin-bottom: 20px;
+            line-height: 1.1;
         }
 
         .cta-sub {
@@ -583,12 +675,12 @@
             color: var(--muted2);
             max-width: 480px;
             margin: 0 auto 48px;
-            line-height: 1.7;
+            line-height: 1.8;
         }
 
         .cta-badges {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -596,79 +688,155 @@
         .badge {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-size: 13px;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 12.5px;
             font-weight: 600;
             color: var(--muted2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: border-color .3s, transform .2s;
+        }
+
+        .badge:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
         }
 
         .badge.accent {
-            background: var(--accent-dim);
+            background: linear-gradient(135deg, rgba(78,186,101,.1), rgba(78,186,101,.03));
             border-color: var(--accent-border);
             color: var(--accent);
+        }
+
+        /* ── SLIDE SEPARATOR ── */
+        .slide + .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.07) 30%, rgba(78,186,101,.15) 50%, rgba(255,255,255,.07) 70%, transparent);
         }
 
         /* ── NAV DOTS ── */
         .nav {
             position: fixed;
-            right: 24px;
+            right: 28px;
             top: 50%;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            gap: 6px;
             z-index: 100;
+            background: rgba(10,10,14,.55);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 14px 8px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .nav-dot {
-            width: 6px; height: 6px;
+            width: 5px; height: 5px;
             border-radius: 50%;
-            background: var(--border);
+            background: rgba(255,255,255,.15);
             cursor: pointer;
-            transition: background .2s, transform .2s;
+            transition: all .35s cubic-bezier(.16,1,.3,1);
         }
 
-        .nav-dot:hover, .nav-dot.active {
+        .nav-dot:hover {
+            background: rgba(255,255,255,.4);
+            transform: scale(1.6);
+        }
+
+        .nav-dot.active {
             background: var(--accent);
-            transform: scale(1.4);
+            height: 22px;
+            border-radius: 3px;
+            box-shadow: 0 0 12px rgba(78,186,101,.5);
         }
 
         /* ── SLIDE NUMBER ── */
         .slide-num {
             position: absolute;
-            bottom: 24px;
-            right: 32px;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 11px;
             color: var(--muted);
-            font-weight: 700;
-            letter-spacing: .1em;
+            font-weight: 600;
+            letter-spacing: .18em;
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-num::before,
+        .slide-num::after {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: var(--border);
         }
 
         /* ── ANIMATIONS ── */
         .fade-in {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity .7s ease, transform .7s ease;
+            transform: translateY(24px);
+            transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
         }
 
         .fade-in.visible { opacity: 1; transform: translateY(0); }
 
         .stagger > * {
             opacity: 0;
-            transform: translateY(16px);
-            transition: opacity .5s ease, transform .5s ease;
+            transform: translateY(18px);
+            transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
         }
 
         .stagger.visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0s; }
-        .stagger.visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: .1s; }
-        .stagger.visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: .2s; }
-        .stagger.visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: .3s; }
-        .stagger.visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: .4s; }
-        .stagger.visible > *:nth-child(6) { opacity: 1; transform: none; transition-delay: .5s; }
-        .stagger.visible > *:nth-child(7) { opacity: 1; transform: none; transition-delay: .6s; }
-        .stagger.visible > *:nth-child(8) { opacity: 1; transform: none; transition-delay: .7s; }
-        .stagger.visible > *:nth-child(9) { opacity: 1; transform: none; transition-delay: .8s; }
+        .stagger.visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: .08s; }
+        .stagger.visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: .16s; }
+        .stagger.visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: .24s; }
+        .stagger.visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: .32s; }
+        .stagger.visible > *:nth-child(6) { opacity: 1; transform: none; transition-delay: .40s; }
+        .stagger.visible > *:nth-child(7) { opacity: 1; transform: none; transition-delay: .48s; }
+        .stagger.visible > *:nth-child(8) { opacity: 1; transform: none; transition-delay: .56s; }
+        .stagger.visible > *:nth-child(9) { opacity: 1; transform: none; transition-delay: .64s; }
+
+        /* ── WORKFLOW NUM PULSE ── */
+        .stagger.visible .workflow-num {
+            animation: orbPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(78,186,101,.25); }
+            50% { box-shadow: 0 0 0 6px rgba(78,186,101,0); }
+        }
+
+        /* ── SOLUTION DESCRIPTION ── */
+        .solution-desc {
+            font-size: 12.5px;
+            color: var(--muted2);
+            margin-top: 24px;
+            max-width: 600px;
+            line-height: 1.75;
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .solution-desc strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -677,7 +845,7 @@
 <nav class="nav" id="nav"></nav>
 
 <!-- SLIDE 1: HERO -->
-<section class="slide slide-hero" data-slide="1">
+<section class="slide" data-slide="1">
     <div class="eyebrow"><span class="eyebrow-dot"></span> Internal Proposal · March 2026</div>
     <h1 class="hero-headline">
         The<br />
@@ -704,78 +872,77 @@
         </div>
         <div class="hero-divider"></div>
         <div class="hero-meta-item">
-            <span class="hero-meta-val">∞</span>
+            <span class="hero-meta-val">&infin;</span>
             <span class="hero-meta-label">Time saved</span>
         </div>
     </div>
-    <div class="slide-num">01 / 07</div>
+    <div class="slide-num">01</div>
 </section>
 
 <!-- SLIDE 2: PROBLEM -->
-<section class="slide slide-problem" data-slide="2">
+<section class="slide" data-slide="2">
     <div class="slide-label">The Problem</div>
     <h2 class="slide-title fade-in">Context is scattered across too many tools.</h2>
     <div class="problem-grid stagger">
-        <div class="problem-card">
-            <div class="problem-icon">🔀</div>
+        <div class="problem-card glass-card">
+            <div class="problem-icon">&#x1F500;</div>
             <div class="problem-title">Tool Switching Overhead</div>
             <div class="problem-desc">Every task requires switching between Jira, GitLab, Slack, Confluence, and the MariaDB console. Context gets lost at every boundary.</div>
         </div>
-        <div class="problem-card">
-            <div class="problem-icon">🧩</div>
+        <div class="problem-card glass-card">
+            <div class="problem-icon">&#x1F9E9;</div>
             <div class="problem-title">Fragmented Knowledge</div>
             <div class="problem-desc">Who owns NET-5451? What did we decide in that Slack thread last Tuesday? Which pipeline broke the deploy? The answers live in five different places.</div>
         </div>
-        <div class="problem-card">
-            <div class="problem-icon">⏳</div>
+        <div class="problem-card glass-card">
+            <div class="problem-icon">&#x23F3;</div>
             <div class="problem-title">Repetitive Lookups</div>
             <div class="problem-desc">Standup prep, ticket status checks, MR reviews, log searches — every developer does these manually, every single day.</div>
         </div>
-        <div class="problem-card">
-            <div class="problem-icon">📉</div>
+        <div class="problem-card glass-card">
+            <div class="problem-icon">&#x1F4C9;</div>
             <div class="problem-title">Slow Incident Response</div>
             <div class="problem-desc">When something breaks, correlating a failing pipeline with the relevant ticket, the Slack thread, and the gameserver logs takes too long.</div>
         </div>
     </div>
-    <div class="slide-num">02 / 07</div>
+    <div class="slide-num">02</div>
 </section>
 
 <!-- SLIDE 3: SOLUTION -->
-<section class="slide slide-solution" data-slide="3">
+<section class="slide" data-slide="3" style="padding-top:48px;padding-bottom:48px;">
     <div class="slide-label">The Solution</div>
-    <h2 class="slide-title fade-in">One AI. All the context. Connected.</h2>
+    <h2 class="slide-title fade-in" style="margin-bottom:28px;">One AI. All the context. Connected.</h2>
 
     <div class="architecture fade-in" id="arch">
         <div class="arch-center">
-            <div class="arch-center-icon">🧠</div>
+            <div class="arch-center-icon">&#x1F9E0;</div>
             <div class="arch-center-label">Company Brain</div>
         </div>
-        <!-- nodes positioned via JS -->
-        <div class="arch-spoke" data-icon="🎫" data-label="Jira"></div>
-        <div class="arch-spoke" data-icon="🦊" data-label="GitLab"></div>
-        <div class="arch-spoke" data-icon="💬" data-label="Slack"></div>
-        <div class="arch-spoke" data-icon="📑" data-label="Confluence"></div>
-        <div class="arch-spoke" data-icon="🗄️" data-label="MariaDB"></div>
-        <div class="arch-spoke" data-icon="🔍" data-label="Elasticsearch"></div>
-        <div class="arch-spoke" data-icon="📊" data-label="Loki"></div>
-        <div class="arch-spoke" data-icon="📧" data-label="Email" data-tag="planned"></div>
-        <div class="arch-spoke" data-icon="🌐" data-label="Browser"></div>
+        <div class="arch-spoke" data-icon="&#x1F3AB;" data-label="Jira"></div>
+        <div class="arch-spoke" data-icon="&#x1F98A;" data-label="GitLab"></div>
+        <div class="arch-spoke" data-icon="&#x1F4AC;" data-label="Slack"></div>
+        <div class="arch-spoke" data-icon="&#x1F4D1;" data-label="Confluence"></div>
+        <div class="arch-spoke" data-icon="&#x1F5C4;&#xFE0F;" data-label="MariaDB"></div>
+        <div class="arch-spoke" data-icon="&#x1F50D;" data-label="Elasticsearch"></div>
+        <div class="arch-spoke" data-icon="&#x1F4CA;" data-label="Loki"></div>
+        <div class="arch-spoke" data-icon="&#x1F4E7;" data-label="Email" data-tag="planned"></div>
+        <div class="arch-spoke" data-icon="&#x1F310;" data-label="Browser"></div>
     </div>
 
-    <p style="font-size:13px;color:var(--muted2);margin-top:40px;max-width:600px;line-height:1.7;">
-        Built as a Model Context Protocol (MCP) server in Deno — plugged directly into Claude Code, which the team is already using. No new tool to adopt. No new subscription.
-    </p>
-    <div class="slide-num">03 / 07</div>
+    <div class="solution-desc fade-in">
+        Built as a <strong>Model Context Protocol</strong> server in Deno — plugged directly into Claude Code, which the team is already using. No new tool to adopt. No new subscription.
+    </div>
+    <div class="slide-num">03</div>
 </section>
 
 <!-- SLIDE 4: CAPABILITIES -->
-<section class="slide slide-capabilities" data-slide="4">
+<section class="slide" data-slide="4">
     <div class="slide-label">Capabilities</div>
     <h2 class="slide-title fade-in">What it can do right now.</h2>
     <div class="capabilities-grid stagger">
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">🎫</div>
+                <div class="cap-icon">&#x1F3AB;</div>
                 <div class="cap-title">Jira</div>
             </div>
             <ul class="cap-items">
@@ -785,9 +952,9 @@
                 <li>Read attachments and ticket history</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">🦊</div>
+                <div class="cap-icon">&#x1F98A;</div>
                 <div class="cap-title">GitLab</div>
             </div>
             <ul class="cap-items">
@@ -797,9 +964,9 @@
                 <li>Trigger, monitor and retry CI pipelines</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">💬</div>
+                <div class="cap-icon">&#x1F4AC;</div>
                 <div class="cap-title">Slack</div>
             </div>
             <ul class="cap-items">
@@ -809,9 +976,9 @@
                 <li>Resolve people by name without guessing IDs</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">📑</div>
+                <div class="cap-icon">&#x1F4D1;</div>
                 <div class="cap-title">Confluence</div>
             </div>
             <ul class="cap-items">
@@ -821,9 +988,9 @@
                 <li>Browse spaces and page hierarchies</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">🗄️</div>
+                <div class="cap-icon">&#x1F5C4;&#xFE0F;</div>
                 <div class="cap-title">MariaDB</div>
             </div>
             <ul class="cap-items">
@@ -833,9 +1000,9 @@
                 <li>Answer customer data questions instantly</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">🔍</div>
+                <div class="cap-icon">&#x1F50D;</div>
                 <div class="cap-title">Elasticsearch</div>
             </div>
             <ul class="cap-items">
@@ -845,9 +1012,9 @@
                 <li>Correlate log events with Jira tickets</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">📊</div>
+                <div class="cap-icon">&#x1F4CA;</div>
                 <div class="cap-title">Loki</div>
             </div>
             <ul class="cap-items">
@@ -857,9 +1024,9 @@
                 <li>Correlate log output with CI pipeline failures</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">🌐</div>
+                <div class="cap-icon">&#x1F310;</div>
                 <div class="cap-title">Browser Automation</div>
             </div>
             <ul class="cap-items">
@@ -869,33 +1036,32 @@
                 <li>Research, scraping, visual verification</li>
             </ul>
         </div>
-        <div class="cap-card">
+        <div class="cap-card glass-card">
             <div class="cap-header">
-                <div class="cap-icon">🤖</div>
+                <div class="cap-icon">&#x1F916;</div>
                 <div class="cap-title">Workflows</div>
             </div>
             <ul class="cap-items">
                 <li>Daily standup summaries in seconds</li>
-                <li>Ticket → branch → MR → transition, automated</li>
+                <li>Ticket &rarr; branch &rarr; MR &rarr; transition, automated</li>
                 <li>Cross-tool incident correlation</li>
                 <li>"What should I work on next?" answered</li>
             </ul>
         </div>
     </div>
-    <div class="slide-num">04 / 07</div>
+    <div class="slide-num">04</div>
 </section>
 
 <!-- SLIDE 5: WORKFLOW DEMO -->
-<section class="slide slide-demo" data-slide="5">
+<section class="slide" data-slide="5" style="padding-top:48px;padding-bottom:48px;">
     <div class="slide-label">Example Workflows</div>
-    <h2 class="slide-title fade-in">Two prompts. Full context. Zero tab-switching.</h2>
+    <h2 class="slide-title fade-in" style="margin-bottom:28px;">Two prompts. Full context. Zero tab-switching.</h2>
     <div class="workflows-grid stagger">
 
-        <!-- WORKFLOW 1: ticket → MR -->
         <div class="workflow">
             <div class="workflow-scenario">
                 <div class="workflow-scenario-label">Workflow 01 — Dev</div>
-                <em>"Pick up NET-5451 and open an MR."</em>
+                <em>Pick up NET-5451 and open an MR.</em>
             </div>
             <div class="workflow-step">
                 <div class="workflow-num">1</div>
@@ -910,7 +1076,7 @@
                 <div class="workflow-body">
                     <div class="workflow-title">Check related context</div>
                     <div class="workflow-desc">Searches Slack for recent discussion. Checks Confluence for architecture docs.</div>
-                    <div class="workflow-tag">Slack · Confluence</div>
+                    <div class="workflow-tag">Slack &middot; Confluence</div>
                 </div>
             </div>
             <div class="workflow-step">
@@ -926,7 +1092,7 @@
                 <div class="workflow-body">
                     <div class="workflow-title">Open MR + move ticket</div>
                     <div class="workflow-desc">Creates a merge request with a proper description. Transitions Jira to "Feedback" automatically.</div>
-                    <div class="workflow-tag">GitLab · Jira</div>
+                    <div class="workflow-tag">GitLab &middot; Jira</div>
                 </div>
             </div>
             <div class="workflow-step">
@@ -939,11 +1105,10 @@
             </div>
         </div>
 
-        <!-- WORKFLOW 2: incident investigation -->
         <div class="workflow">
             <div class="workflow-scenario">
                 <div class="workflow-scenario-label">Workflow 02 — Ops</div>
-                <em>"Why is gameserver #42 crashing since 14:00?"</em>
+                <em>Why is gameserver #42 crashing since 14:00?</em>
             </div>
             <div class="workflow-step">
                 <div class="workflow-num">1</div>
@@ -974,7 +1139,7 @@
                 <div class="workflow-body">
                     <div class="workflow-title">Look up runbook + notify</div>
                     <div class="workflow-desc">Finds the incident runbook in Confluence. Posts a summary with root cause and affected scope to the ops channel.</div>
-                    <div class="workflow-tag">Confluence · Slack</div>
+                    <div class="workflow-tag">Confluence &middot; Slack</div>
                 </div>
             </div>
             <div class="workflow-step">
@@ -988,16 +1153,16 @@
         </div>
 
     </div>
-    <div class="slide-num">05 / 07</div>
+    <div class="slide-num">05</div>
 </section>
 
 <!-- SLIDE 6: ROADMAP -->
-<section class="slide slide-roadmap" data-slide="6">
+<section class="slide" data-slide="6">
     <div class="slide-label">Roadmap</div>
     <h2 class="slide-title fade-in">Where this is going.</h2>
     <div class="roadmap-grid stagger">
         <div class="roadmap-col col-done">
-            <div class="roadmap-phase done">✓ Shipped</div>
+            <div class="roadmap-phase done">&#x2713; Shipped</div>
             <div class="roadmap-items">
                 <div class="roadmap-item"><div class="roadmap-item-dot"></div> Jira full CRUD + transitions</div>
                 <div class="roadmap-item"><div class="roadmap-item-dot"></div> GitLab: branches, commits, MRs, CI</div>
@@ -1013,7 +1178,7 @@
             </div>
         </div>
         <div class="roadmap-col col-next">
-            <div class="roadmap-phase next">→ Next</div>
+            <div class="roadmap-phase next">&rarr; Next</div>
             <div class="roadmap-items">
                 <div class="roadmap-item"><div class="roadmap-item-dot"></div> Parallel knowledge sync agents</div>
                 <div class="roadmap-item"><div class="roadmap-item-dot"></div> Automated MR review workflow</div>
@@ -1021,7 +1186,7 @@
             </div>
         </div>
         <div class="roadmap-col col-future">
-            <div class="roadmap-phase future">◇ Future</div>
+            <div class="roadmap-phase future">&#x25C7; Future</div>
             <div class="roadmap-items">
                 <div class="roadmap-item"><div class="roadmap-item-dot"></div> Outlook / Email integration</div>
                 <div class="roadmap-item"><div class="roadmap-item-dot"></div> Calendar awareness</div>
@@ -1031,7 +1196,7 @@
             </div>
         </div>
     </div>
-    <div class="slide-num">06 / 07</div>
+    <div class="slide-num">06</div>
 </section>
 
 <!-- SLIDE 7: CTA -->
@@ -1041,23 +1206,27 @@
         This runs inside Claude Code — zero new tools, zero new subscriptions.
     </p>
     <div class="cta-badges fade-in">
-        <div class="badge accent">Open source · internal repo</div>
-        <div class="badge">Deno · no runtime deps</div>
+        <div class="badge accent">Open source &middot; internal repo</div>
+        <div class="badge">Deno &middot; no runtime deps</div>
         <div class="badge">Works with existing Claude Pro rollout</div>
         <div class="badge">Extends in hours, not weeks</div>
     </div>
-    <div class="slide-num">07 / 07</div>
+    <div class="slide-num">07</div>
 </section>
 
 <script>
     // ── NAV DOTS ──
     const slides = document.querySelectorAll('.slide');
     const nav = document.getElementById('nav');
+    let currentSlide = 0;
     slides.forEach((slide, i) => {
         const dot = document.createElement('div');
         dot.className = 'nav-dot';
         dot.title = `Slide ${i + 1}`;
-        dot.addEventListener('click', () => slide.scrollIntoView({ behavior: 'smooth' }));
+        dot.addEventListener('click', () => {
+            currentSlide = i;
+            slide.scrollIntoView({ behavior: 'smooth' });
+        });
         nav.appendChild(dot);
     });
 
@@ -1068,9 +1237,9 @@
         if (!match) return;
         const target = parseInt(match[1]);
         const suffix = match[2] || '';
-        const duration = 1200;
+        const duration = 1400;
         const start = performance.now();
-        const easeOut = t => 1 - Math.pow(1 - t, 3);
+        const easeOut = t => 1 - Math.pow(1 - t, 4);
         const tick = now => {
             const t = Math.min((now - start) / duration, 1);
             el.textContent = Math.round(easeOut(t) * target) + suffix;
@@ -1079,29 +1248,10 @@
         requestAnimationFrame(tick);
     }
 
-    // ── TYPEWRITER ──
-    function typewrite(el) {
-        const lines = el.querySelectorAll('span, br');
-        const full = el.innerHTML;
-        el.innerHTML = '';
-        el.style.visibility = 'visible';
-        let i = 0;
-        const chars = full.split('');
-        const type = () => {
-            if (i < chars.length) {
-                el.innerHTML = chars.slice(0, ++i).join('') + '<span class="cursor">|</span>';
-                setTimeout(type, i < 5 ? 0 : Math.random() * 30 + 15);
-            } else {
-                el.innerHTML = full;
-            }
-        };
-        type();
-    }
-
-    // ── PARTICLE CANVAS (single fixed layer) ──
+    // ── PARTICLE CANVAS ──
     function initParticles() {
         const canvas = document.createElement('canvas');
-        canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.55;z-index:0;';
+        canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.45;z-index:0;';
         document.body.prepend(canvas);
         const ctx = canvas.getContext('2d');
         let W, H, particles = [];
@@ -1113,11 +1263,11 @@
         resize();
         window.addEventListener('resize', resize);
 
-        for (let i = 0; i < 180; i++) {
+        for (let i = 0; i < 120; i++) {
             particles.push({
                 x: Math.random() * W, y: Math.random() * H,
-                vx: (Math.random() - .5) * .5, vy: (Math.random() - .5) * .5,
-                r: Math.random() * 3 + 1, o: Math.random() * .55 + .2
+                vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+                r: Math.random() * 2 + .5, o: Math.random() * .5 + .15
             });
         }
 
@@ -1127,28 +1277,26 @@
                 p.x += p.vx; p.y += p.vy;
                 if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
                 if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-                // glow effect per particle
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(78,186,101,${p.o * 0.15})`;
+                ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(78,186,101,${p.o * 0.1})`;
                 ctx.fill();
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(78,186,101,${p.o})`;
                 ctx.fill();
             });
-            // draw connections
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const d = Math.sqrt(dx * dx + dy * dy);
-                    if (d < 200) {
+                    if (d < 180) {
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(78,186,101,${.22 * (1 - d / 200)})`;
-                        ctx.lineWidth = 1.5;
+                        ctx.strokeStyle = `rgba(78,186,101,${.15 * (1 - d / 180)})`;
+                        ctx.lineWidth = 1;
                         ctx.stroke();
                     }
                 }
@@ -1158,16 +1306,16 @@
         draw();
     }
 
-    // ── GLOWING ORB PULSE on arch-center ──
+    // ── GLOWING ORB ──
     function initOrbGlow() {
         const orb = document.querySelector('.arch-center');
         if (!orb) return;
         let t = 0;
         const animate = () => {
-            t += 0.02;
-            const glow = 20 + Math.sin(t) * 14;
-            const size = 60 + Math.sin(t * .7) * 10;
-            orb.style.boxShadow = `0 0 ${glow}px rgba(78,186,101,0.3), 0 0 ${size}px rgba(78,186,101,0.08)`;
+            t += 0.015;
+            const glow = 24 + Math.sin(t) * 16;
+            const size = 50 + Math.sin(t * .6) * 12;
+            orb.style.boxShadow = `0 0 ${glow}px rgba(78,186,101,0.25), 0 0 ${size}px rgba(78,186,101,0.06), inset 0 0 20px rgba(78,186,101,0.05)`;
             requestAnimationFrame(animate);
         };
         animate();
@@ -1192,29 +1340,28 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             const ar = arch.getBoundingClientRect();
-            const or = orb.getBoundingClientRect();
-            const cx = or.left - ar.left + or.width / 2;
-            const cy = or.top - ar.top + or.height / 2;
+            const or_ = orb.getBoundingClientRect();
+            const cx = or_.left - ar.left + or_.width / 2;
+            const cy = or_.top - ar.top + or_.height / 2;
 
             spokes.forEach((spoke, i) => {
                 const sr = spoke.getBoundingClientRect();
                 const sx = sr.left - ar.left + sr.width / 2;
                 const sy = sr.top - ar.top + sr.height / 2;
-                const alpha = .35 + Math.sin(phase + i * .9) * .15;
-                // animated dash offset — flows toward center
-                const dashLen = 3;
-                const gapLen = 18;
+                const alpha = .25 + Math.sin(phase + i * .9) * .12;
+                const dashLen = 2;
+                const gapLen = 16;
                 ctx.setLineDash([dashLen, gapLen]);
-                ctx.lineDashOffset = -(phase * 8) % (dashLen + gapLen);
+                ctx.lineDashOffset = -(phase * 6) % (dashLen + gapLen);
                 ctx.beginPath();
                 ctx.moveTo(sx, sy);
                 ctx.lineTo(cx, cy);
                 ctx.strokeStyle = `rgba(78,186,101,${alpha})`;
-                ctx.lineWidth = 1.2;
+                ctx.lineWidth = 1;
                 ctx.stroke();
                 ctx.setLineDash([]);
             });
-            phase += 0.006;
+            phase += 0.005;
             requestAnimationFrame(draw);
         }
         draw();
@@ -1222,7 +1369,7 @@
 
     // ── SCROLL PROGRESS BAR ──
     const progress = document.createElement('div');
-    progress.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#4eba65,#7de899);z-index:999;transition:width .1s;width:0;';
+    progress.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:999;transition:width .15s;width:0;box-shadow:0 0 12px rgba(78,186,101,.4);';
     document.body.prepend(progress);
     window.addEventListener('scroll', () => {
         const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
@@ -1236,24 +1383,22 @@
             if (e.isIntersecting) {
                 const slide = e.target;
                 const idx = Array.from(slides).indexOf(slide);
+                currentSlide = idx;
                 document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
 
                 if (seen.has(slide)) return;
                 seen.add(slide);
 
-                // fade-in elements
                 slide.querySelectorAll('.fade-in').forEach((el, i) => {
-                    setTimeout(() => el.classList.add('visible'), i * 120);
+                    setTimeout(() => el.classList.add('visible'), i * 150);
                 });
 
-                // stagger children
                 slide.querySelectorAll('.stagger').forEach(group => {
-                    setTimeout(() => group.classList.add('visible'), 100);
+                    setTimeout(() => group.classList.add('visible'), 120);
                 });
 
-                // counter animation on hero stats
                 slide.querySelectorAll('.hero-meta-val').forEach((el, i) => {
-                    setTimeout(() => animateCounter(el), 400 + i * 150);
+                    setTimeout(() => animateCounter(el), 500 + i * 180);
                 });
             }
         });
@@ -1264,64 +1409,72 @@
     // ── ORBITAL NODE LAYOUT ──
     (function() {
         const spokes = document.querySelectorAll('.arch-spoke');
-        const radius = 210;
+        const radius = 165;
         const total = spokes.length;
         spokes.forEach((spoke, i) => {
             const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
-            // translate(-50%, -50%) centers the icon (52px) — label/tag are absolute so don't affect height
             spoke.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
             const icon = spoke.dataset.icon;
             const label = spoke.dataset.label;
             const tag = spoke.dataset.tag;
             spoke.innerHTML = `
                 <div class="arch-spoke-icon">${icon}</div>
-                <div class="arch-spoke-label" style="position:absolute;top:58px;left:50%;transform:translateX(-50%);white-space:nowrap;">${label}</div>
-                ${tag ? `<div class="arch-spoke-tag" style="position:absolute;top:74px;left:50%;transform:translateX(-50%);white-space:nowrap;">${tag}</div>` : ''}
+                <div class="arch-spoke-label" style="position:absolute;top:46px;left:50%;transform:translateX(-50%);white-space:nowrap;">${label}</div>
+                ${tag ? `<div class="arch-spoke-tag" style="position:absolute;top:60px;left:50%;transform:translateX(-50%);white-space:nowrap;">${tag}</div>` : ''}
             `;
         });
     })();
 
-    // ── INIT SPECIALS ──
+    // ── SNAPPED NAV (wheel, keyboard, touch) ──
+    let isSnapping = false;
+
+    function goTo(idx) {
+        idx = Math.max(0, Math.min(idx, slides.length - 1));
+        if (idx === currentSlide && isSnapping) return;
+        isSnapping = true;
+        currentSlide = idx;
+        slides[idx].scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => { isSnapping = false; }, 800);
+    }
+
+    // Wheel — one event fires one slide change
+    window.addEventListener('wheel', e => {
+        e.preventDefault();
+        if (isSnapping) return;
+        if (e.deltaY > 0) goTo(currentSlide + 1);
+        else if (e.deltaY < 0) goTo(currentSlide - 1);
+    }, { passive: false });
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+            e.preventDefault();
+            goTo(currentSlide + 1);
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            e.preventDefault();
+            goTo(currentSlide - 1);
+        }
+    });
+
+    // Touch
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    window.addEventListener('touchend', e => {
+        if (isSnapping) return;
+        const delta = touchStartY - e.changedTouches[0].clientY;
+        if (Math.abs(delta) > 40) {
+            goTo(delta > 0 ? currentSlide + 1 : currentSlide - 1);
+        }
+    }, { passive: true });
+
+    // ── INIT ──
     initParticles();
     initOrbGlow();
-    // defer spoke beams until layout is ready
     window.addEventListener('load', initSpokeBeams);
 </script>
-
-<style>
-    .cursor {
-        display: inline-block;
-        animation: blink .7s step-end infinite;
-        color: var(--accent);
-        font-weight: 300;
-    }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-    /* Smoother stagger easing */
-    .stagger > * {
-        transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1) !important;
-    }
-
-    /* Slide-in from below on fade-in */
-    .fade-in {
-        transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1) !important;
-    }
-
-    /* Cap card glow on hover */
-    .cap-card:hover {
-        box-shadow: 0 0 30px rgba(78,186,101,.07);
-    }
-
-    /* Workflow step number pulse when visible */
-    .stagger.visible .workflow-num {
-        animation: orbPulse 3s ease-in-out infinite;
-    }
-    @keyframes orbPulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(78,186,101,.3); }
-        50% { box-shadow: 0 0 0 6px rgba(78,186,101,0); }
-    }
-</style>
 </body>
 </html>

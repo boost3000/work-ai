@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { ElasticsearchClient } from '../../tools/elasticsearch/client.ts';
+import type { ElasticsearchClient } from '../../tools/elasticsearch/client.ts';
 
 export function registerElasticsearchTools(server: McpServer, elasticsearch: ElasticsearchClient): void {
     server.registerTool(

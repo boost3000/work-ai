@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { MariaDbClient } from '../../tools/mariadb/client.ts';
+import type { MariaDbClient } from '../../tools/mariadb/client.ts';
 
 export function registerMariaDbTools(server: McpServer, mariadb: MariaDbClient): void {
     server.registerTool(

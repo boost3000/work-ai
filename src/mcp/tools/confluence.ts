@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { ConfluenceClient } from '../../tools/confluence/client.ts';
+import type { ConfluenceClient } from '../../tools/confluence/client.ts';
 
 export function registerConfluenceTools(server: McpServer, confluence: ConfluenceClient): void {
     server.registerTool(

@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { JiraClient } from '../../tools/jira/client.ts';
+import type { JiraClient } from '../../tools/jira/client.ts';
 
 export function registerJiraTools(server: McpServer, jira: JiraClient): void {
     server.registerTool(

@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { LokiClient } from '../../tools/loki/client.ts';
+import type { LokiClient } from '../../tools/loki/client.ts';
 
 export function registerLokiTools(server: McpServer, loki: LokiClient): void {
     server.registerTool(

@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { SlackClient } from '../../tools/slack/client.ts';
+import type { SlackClient } from '../../tools/slack/client.ts';
 
 export function registerSlackTools(server: McpServer, slack: SlackClient): void {
     server.registerTool(

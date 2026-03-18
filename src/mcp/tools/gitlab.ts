@@ -1,6 +1,6 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { GitLabClient } from '../../tools/gitlab/client.ts';
+import type { GitLabClient } from '../../tools/gitlab/client.ts';
 
 export function registerGitLabTools(server: McpServer, gitlab: GitLabClient): void {
     server.registerTool(

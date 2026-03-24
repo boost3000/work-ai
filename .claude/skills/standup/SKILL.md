@@ -1,3 +1,9 @@
+---
+name: standup
+description: Prepare a standup summary for me based on Jira issues and Slack activity from the past week
+disable-model-invocation: true
+---
+
 # Prepare a standup summary for me
 
 **Step 1 — Load context:**

@@ -1,3 +1,9 @@
+---
+name: whats-next
+description: Look at my current Jira issues and recent Slack activity, then recommend what I should work on next
+disable-model-invocation: true
+---
+
 # Look at my current Jira issues and recent Slack activity, then recommend what I should work on next
 
 **Step 1 — Load context:**
